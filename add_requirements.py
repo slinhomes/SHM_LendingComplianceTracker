@@ -1,5 +1,6 @@
 import streamlit as st
 import pyodbc
+import re
 
 # Function to connect to the Azure SQL database
 def create_connection():
@@ -12,8 +13,18 @@ def create_connection():
         f'DRIVER={driver};SERVER={server};PORT=1433;DATABASE={database};UID={username};PWD={password}')
     return conn
 
+# Function to validate email
+def is_valid_email(email):
+    # Regular expression for validating an email
+    regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+    if re.fullmatch(regex, email):
+        return True
+    else:
+        return False
+
 def show():
-    st.write("Welcome to the Add Requirements Page")
+    #st.write("Welcome to the Add Requirements Page")
+    st.markdown("---")  # Page breaker
 
     # Connect to the database and fetch property addresses and IDs
     conn = create_connection()
@@ -59,7 +70,7 @@ def show():
     # Numeric input for Deadline, period
     deadline_period = st.number_input("Deadline (days)", min_value=0, value=0, step=1,
                                     format="%d",
-                                    help="If action is required to be completed by X days following the trigger date.")
+                                    help="If action is required to be completed by X days following the trigger date. Input if applicable.")
 
     # Date input for Deadline and Reminders
     deadline_date = st.date_input("Deadline")
@@ -67,7 +78,21 @@ def show():
     fnl_reminder = st.date_input("Final reminder")
 
     # Dropdown for recurring / one-off
-    recurrence = st.selectbox("Recurrence (days)", ["0", "10","15","20","25","30","60","90"])
+    recurrence = st.selectbox("Recurrence (every X days)", ["0", "10","15","20","25","30","60","90"])
     st.caption("For one-off event, select 0 days for recurrence.")
+    
+    # Text input for key contacts
+    loc8me_contact = st.text_input("Loc8me contact", placeholder="Please add email address")
+    shm_team = st.text_input("SHM team responsible", placeholder="Please add team initial") 
+    shm_individual = st.text_input("SHM individual responsible", placeholder="Please add email address")
+    shm_bu = st.text_input("SHM BU lead", placeholder="Please add email address")
+    added_by = st.text_input("Added by", placeholder="Please add your initials")
 
+    # Example of using the validation function (adjust according to your app's flow)
+    if st.button('Submit'):
+        if is_valid_email(loc8me_contact) and is_valid_email(shm_bu):
+            st.success("")
+        else:
+            st.error("Please enter valid email addresses.")
+    
     # Additional code for the page goes here
