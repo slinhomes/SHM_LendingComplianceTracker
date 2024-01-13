@@ -39,4 +39,9 @@ def show():
                                     'Arrange valuer / lender inspection and building surveys',
                                     'Other conditions'])
 
+    # Text input for Reference in facility agreement
+    reference = st.text_input("Reference in facility agreement")
+    # Footnote explaining the expected input
+    st.caption("Please submit reference number from the facilities agreement. For example: \"Schedule 10 - 1.0\"")
+
     # Additional code for the page goes here
