@@ -133,6 +133,7 @@ def show():
     # Collect data into a DataFrame for preview
     data = {
         "Dwelling ID": dwelling_id,
+        "Property": selected_address,
         "Lender": lender,
         "Condition Title": condition_title,
         "Reference": reference,
@@ -149,7 +150,7 @@ def show():
         "Entry date": entry_date
     }
     preview_df = pd.DataFrame([data])
-    preview_df = preview_df.reset_index(drop=True)
+    preview_df = preview_df.set_index('Dwelling ID')
 
     # Display the data as a table for preview
     st.write("IMPORTANT!")
