@@ -15,14 +15,19 @@ def create_connection():
 def show():
     st.write("Welcome to the Add Requirements Page")
 
-    # Connect to the database and fetch property addresses
+    # Connect to the database and fetch property addresses and IDs
     conn = create_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT flat_number, property_address, city FROM SHMDwellingInfo")
+    cursor.execute("SELECT DwellingID, flat_number, property_address, city FROM SHMDwellingInfo")
     rows = cursor.fetchall()
-    property_addresses = [' '.join(map(str, row)) for row in rows]  # Concatenating the address components
+    addresses = {f'{row[1]} {row[2]}, {row[3]}': row[0] for row in rows}  # Mapping address to DwellingID
 
     # Dropdown for selecting property address
-    property_address = st.selectbox("Property Address", property_addresses)
+    selected_address = st.selectbox("Property Address", list(addresses.keys()))
+
+    # Display Dwelling ID and full address
+    dwelling_id = addresses[selected_address]
+    st.write(f"Dwelling ID: {dwelling_id}")
+    st.write(f"Full Address: {selected_address}")
 
     # Additional code for the page goes here
