@@ -18,16 +18,25 @@ def show():
     # Connect to the database and fetch property addresses and IDs
     conn = create_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT Dwelling_ID, flat_number, property_address, city FROM SHMDwellingInfo")
+    cursor.execute("SELECT DwellingID, flat_number, property_address, city, propco FROM SHMDwellingInfo")
     rows = cursor.fetchall()
-    addresses = {f'{row[1]} {row[2]}, {row[3]}': row[0] for row in rows}  # Mapping address to DwellingID
+    addresses = {f'{row[1]} {row[2]}, {row[3]}': (row[0], row[4]) for row in rows}  # Mapping address to DwellingID and propco
 
     # Dropdown for selecting property address
     selected_address = st.selectbox("Property Address", list(addresses.keys()))
 
     # Display Dwelling ID and full address
-    dwelling_id = addresses[selected_address]
+    dwelling_id, propco = addresses[selected_address]
     st.write(f"Dwelling ID: {dwelling_id}")
-    st.write(f"Full Address: {selected_address}")
+    st.write(f"Propco: {propco}")
+
+    # Dropdown for selecting a Lender and Requirements
+    lender = st.selectbox("Lender", ["Santander", "Aburthnott"])
+    # Dropdown for selecting a requirements or condition
+    condition_title = st.selectbox("Requirements / Condition",
+                                   ['HMO Licence','Asbestos Survey','Refurb Compliance',
+                                    'Refurb Inspectors (incl. Building Certificates and HMO variations)',
+                                    'Arrange valuer / lender inspection and building surveys',
+                                    'Other conditions'])
 
     # Additional code for the page goes here
