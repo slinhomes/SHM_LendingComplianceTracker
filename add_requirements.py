@@ -18,7 +18,7 @@ def show():
     # Connect to the database and fetch property addresses and IDs
     conn = create_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT DwellingID, flat_number, property_address, city FROM SHMDwellingInfo")
+    cursor.execute("SELECT Dwelling_ID, flat_number, property_address, city FROM SHMDwellingInfo")
     rows = cursor.fetchall()
     addresses = {f'{row[1]} {row[2]}, {row[3]}': row[0] for row in rows}  # Mapping address to DwellingID
 
