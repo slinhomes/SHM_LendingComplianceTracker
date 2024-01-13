@@ -149,6 +149,7 @@ def show():
         "Entry date": entry_date
     }
     preview_df = pd.DataFrame([data])
+    preview_df = preview_df.set_index('Dwelling ID')
 
     # Display the data as a table for preview
     st.write("IMPORTANT!")
