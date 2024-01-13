@@ -57,7 +57,7 @@ def show():
     trigger_date = st.date_input("Requirement Trigger Date")
 
     # Numeric input for Deadline, period
-    deadline_period = st.number_input("Deadline (days)",
+    deadline_period = st.number_input("Deadline (days)", min_value=0, value=0, step=1,
                                     format="%d",
                                     help="If action is required to be completed by X days following the trigger date.")
 
