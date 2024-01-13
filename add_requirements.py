@@ -56,4 +56,18 @@ def show():
     # Date input for Trigger Date
     trigger_date = st.date_input("Requirement Trigger Date")
 
+    # Numeric input for Deadline, period
+    deadline_period = st.number_input("Deadline (days)",
+                                    format="%d",
+                                    help="If action is required to be completed by X days following the trigger date.")
+
+    # Date input for Deadline and Reminders
+    deadline_date = st.date_input("Deadline")
+    fst_reminder = st.date_input("First reminder")
+    fnl_reminder = st.date_input("Final reminder")
+
+    # Dropdown for recurring / one-off
+    recurrence = st.selectbox("Recurrence (days)", ["0", "10","15","20","25","30","60","90"])
+    st.caption("For one-off event, select 0 days for recurrence.")
+
     # Additional code for the page goes here
