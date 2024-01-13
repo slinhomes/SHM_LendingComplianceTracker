@@ -1,6 +1,7 @@
 import streamlit as st
 import pyodbc
 import re
+import pandas as pd
 
 # Function to connect to the Azure SQL database
 def create_connection():
@@ -12,6 +13,46 @@ def create_connection():
     conn = pyodbc.connect(
         f'DRIVER={driver};SERVER={server};PORT=1433;DATABASE={database};UID={username};PWD={password}')
     return conn
+
+# Function to create the SHMLendingCompliance table
+def create_table(conn):
+    try:
+        sql = '''CREATE TABLE [dbo].[SHMLendingCompliance] (
+                [Dwelling_ID] NVARCHAR(50) NULL,
+                [lender] NVARCHAR(50) NULL,
+                [condition_title] NVARCHAR(100) NULL,
+                [reference] NVARCHAR(100) NULL,
+                [requirements] NVARCHAR(MAX) NULL,
+                [action_req] NVARCHAR(MAX) NULL,
+                [trigger_date] DATE NULL,
+                [deadline_period] INT NULL,
+                [deadline_date] DATE NULL,
+                [fst_reminder] DATE NULL,
+                [fnl_reminder] DATE NULL,
+                [recurrence] NVARCHAR(50) NULL,
+                [loc8me_contact] NVARCHAR(100) NULL,
+                [shm_team] NVARCHAR(50) NULL,
+                [shm_individual] NVARCHAR(100) NULL,
+                [shm_bu] NVARCHAR(100) NULL,
+                [added_by] NVARCHAR(50) NULL,
+                [entry_date] DATE NULL
+            );'''
+        cur = conn.cursor()
+        cur.execute(sql)
+        conn.commit()
+    except Exception as e:
+        print(e)
+
+# Function to insert data into the SHMLendingCompliance table
+def insert_data(conn, data):
+    insert_sql = '''INSERT INTO SHMLendingCompliance (Dwelling_ID, lender, condition_title, reference, requirements, 
+                   action_req, trigger_date, deadline_period, deadline_date, fst_reminder, fnl_reminder, recurrence, 
+                   loc8me_contact, shm_team, shm_individual, shm_bu, added_by, entry_date)
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);'''
+
+    cur = conn.cursor()
+    cur.execute(insert_sql, data)
+    conn.commit()
 
 # Function to validate email
 def is_valid_email(email):
@@ -87,12 +128,31 @@ def show():
     shm_individual = st.text_input("SHM individual responsible", placeholder="Please add email address")
     shm_bu = st.text_input("SHM BU lead", placeholder="Please add email address")
     added_by = st.text_input("Added by", placeholder="Please add your initials")
+    entry_date = st.date_input("Requirement added on")
+
+    # Collect data into a DataFrame for preview
+    data = {
+        "Dwelling_ID": dwelling_id,
+        "Lender": lender,
+        "Condition Title": condition_title,
+        "Reference": reference,
+        "Requirements": requirements,
+        "Action Required": action_req,
+        "Trigger Date": trigger_date,
+        "Deadline Period (days)": deadline_period,
+        # Include other fields as needed
+    }
+    preview_df = pd.DataFrame([data])
+
+    # Display the data as a table for preview
+    st.write("Preview of entered data:")
+    st.table(preview_df)
+
+    submit_button = st.button("Submit")
 
     # Example of using the validation function (adjust according to your app's flow)
     if st.button('Submit'):
         if is_valid_email(loc8me_contact) and is_valid_email(shm_bu):
             st.success("")
         else:
-            st.error("Please enter valid email addresses.")
-    
-    # Additional code for the page goes here
+            st.error("IMPORTANT! Please enter valid email addresses.")
