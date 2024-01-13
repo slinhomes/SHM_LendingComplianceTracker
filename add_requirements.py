@@ -149,14 +149,14 @@ def show():
         "Entry date": entry_date
     }
     preview_df = pd.DataFrame([data])
-    #preview_df = preview_df.set_index('Dwelling ID')
+    preview_df = preview_df.reset_index(drop=True)
 
     # Display the data as a table for preview
     st.write("IMPORTANT!")
     st.write("Please check the following details entered before submission.")
 
     transposed_preview_df = preview_df.T
-    transposed_preview_df = transposed_preview_df.iloc[1:,:]
+    #transposed_preview_df = transposed_preview_df.iloc[1:,:]
     st.table(transposed_preview_df)
 
     submit_button = st.button("Submit")
