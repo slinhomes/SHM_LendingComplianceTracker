@@ -140,14 +140,22 @@ def show():
         "Action Required": action_req,
         "Trigger Date": trigger_date,
         "Deadline Period (days)": deadline_period,
-        # Include other fields as needed
+        "Deadline": deadline_date,
+        "Loc8me Contact": loc8me_contact,
+        "SHM team resopnsible": shm_team,
+        "SHM invidual responsible": shm_individual,
+        "SHM BU lead": shm_bu,
+        "Data entered by": added_by,
+        "Entry date": entry_date
     }
     preview_df = pd.DataFrame([data])
 
     # Display the data as a table for preview
     st.write("IMPORTANT!")
     st.write("Please check the following details entered before submission.")
-    st.table(preview_df.set_index('Dwelling ID'))
+
+    transposed_preview_df = preview_df.T
+    st.table(transposed_preview_df)
 
     submit_button = st.button("Submit")
      
@@ -155,7 +163,9 @@ def show():
         # Prepare the data tuple for database insertion
         data_tuple = (
             dwelling_id, lender, condition_title, reference, requirements, 
-            action_req, trigger_date, deadline_period, #... other fields as needed
+            action_req, trigger_date, deadline_period, deadline_date, fst_reminder,
+            fnl_reminder, recurrence, loc8me_contact, shm_team, shm_individual,
+            shm_bu, added_by, entry_date #... other fields as needed
         )
 
         # Connect to the database
@@ -170,7 +180,3 @@ def show():
 
         # Close the database connection
         conn.close()
-
-# not really needed for streamlit
-if __name__ == "__main__":
-    show()
