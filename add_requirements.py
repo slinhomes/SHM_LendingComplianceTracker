@@ -158,7 +158,7 @@ def show():
     st.table(transposed_preview_df)
 
     submit_button = st.button("Submit")
-     
+  
     if submit_button:
         # Prepare the data tuple for database insertion
         data_tuple = (
@@ -170,6 +170,9 @@ def show():
 
         # Connect to the database
         conn = create_connection()
+
+        # Create the table if it doesn't exist
+        create_table(conn)
 
         # Insert data into the database
         try:
