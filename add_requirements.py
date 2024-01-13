@@ -132,7 +132,7 @@ def show():
 
     # Collect data into a DataFrame for preview
     data = {
-        "Dwelling_ID": dwelling_id,
+        "Dwelling ID": dwelling_id,
         "Lender": lender,
         "Condition Title": condition_title,
         "Reference": reference,
@@ -145,14 +145,32 @@ def show():
     preview_df = pd.DataFrame([data])
 
     # Display the data as a table for preview
-    st.write("Preview of entered data:")
-    st.table(preview_df)
+    st.write("IMPORTANT!")
+    st.write("Please check the following details entered before submission.")
+    st.table(preview_df.set_index('Dwelling ID'))
 
     submit_button = st.button("Submit")
+     
+    if submit_button:
+        # Prepare the data tuple for database insertion
+        data_tuple = (
+            dwelling_id, lender, condition_title, reference, requirements, 
+            action_req, trigger_date, deadline_period, #... other fields as needed
+        )
 
-    # Example of using the validation function (adjust according to your app's flow)
-    if st.button('Submit'):
-        if is_valid_email(loc8me_contact) and is_valid_email(shm_bu):
-            st.success("")
-        else:
-            st.error("IMPORTANT! Please enter valid email addresses.")
+        # Connect to the database
+        conn = create_connection()
+
+        # Insert data into the database
+        try:
+            insert_data(conn, data_tuple)
+            st.success("Data submitted successfully!")
+        except Exception as e:
+            st.error(f"An error occurred: {e}")
+
+        # Close the database connection
+        conn.close()
+
+# not really needed for streamlit
+if __name__ == "__main__":
+    show()
