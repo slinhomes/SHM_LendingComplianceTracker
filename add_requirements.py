@@ -44,12 +44,14 @@ def show():
                               placeholder="Please submit reference number from the facilities agreement. For example: 'Schedule 10 - 1.0'")
 
     # Text input for Reference in facility agreement
-    requirements = st.text_input("Requirements as per the facility agreement",
-                                 placeholder="Please copy and paste the original requirement wording from the facility agreement.")
+    requirements = st.text_area("Requirements as per the facility agreement",
+                                 placeholder="Please copy and paste the original requirement wording from the facility agreement.",
+                                 height=100)
    
     # Text input for Reference in facility agreement
-    action_req = st.text_input("Action required",
-                                placeholder="Please summarise action/task required as per the facility agreement.")
+    action_req = st.text_area("Action required",
+                                placeholder="Please summarise action/task required as per the facility agreement.",
+                                height=100)
     
     # Date input for Trigger Date
     trigger_date = st.date_input("Requirement Trigger Date")
