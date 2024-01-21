@@ -18,6 +18,7 @@ def create_connection():
 def create_table(conn):
     try:
         sql = '''CREATE TABLE [dbo].[SHMLendingCompliance] (
+                [UID] UNIQUEIDENTIFIER DEFAULT NEWID() PRIMARY KEY,
                 [Dwelling_ID] NVARCHAR(50) NULL,
                 [Asset_ID] NVARCHAR(50) NULL,
                 [lender] NVARCHAR(50) NULL,
@@ -46,10 +47,10 @@ def create_table(conn):
 
 # Function to insert data into the SHMLendingCompliance table
 def insert_data(conn, data):
-    insert_sql = '''INSERT INTO SHMLendingCompliance (Dwelling_ID, Asset_ID,lender, condition_title, reference, requirements, 
+    insert_sql = '''INSERT INTO SHMLendingCompliance (Dwelling_ID, Asset_ID, lender, condition_title, reference, requirements, 
                    action_req, trigger_date, deadline_period, deadline_date, fst_reminder, fnl_reminder, recurrence, 
                    loc8me_contact, shm_team, shm_individual, shm_bu, added_by, entry_date)
-                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);'''
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);'''
 
     cur = conn.cursor()
     cur.execute(insert_sql, data)
