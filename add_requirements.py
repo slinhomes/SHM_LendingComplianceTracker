@@ -83,7 +83,7 @@ def show():
 
     dwelling_id = asset_id = propco = ""  # Initialize dwelling_id, asset_id and propco
 
-    if selected_asset_address:
+    if selected_asset_address != "Select property address":
         # Display Asset ID and asset address if an asset address is selected
         asset_id, propco = asset_address[selected_asset_address]
         st.write(f"Asset ID: {asset_id}")
