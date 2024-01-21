@@ -74,7 +74,7 @@ def show():
     cursor.execute("SELECT Dwelling_ID, Asset_ID, flat_number, property_address, city, propco FROM SHMDwellingInfo")
     rows = cursor.fetchall()
     asset_address =  {f'{row[3]}, {row[4]}': (row[1], row[5]) for row in rows}  # Mapping asset address to AssetID and propco
-    addresses = {f'{row[2]} {row[3]}, {row[4]}': (row[0], row[5]) for row in rows}  # Mapping detailed address to DwellingID and propco
+    addresses = {f'{row[2]} {row[3]}, {row[4]}': (row[0], row[1], row[5]) for row in rows}  # Mapping detailed address to DwellingID and propco
 
     st.caption("Select property address or detailed asset below.")
 
@@ -88,8 +88,6 @@ def show():
         asset_id, propco = asset_address[selected_asset_address]
         st.write(f"Asset ID: {asset_id}")
         st.write(f"Propco: {propco}")
-    else:
-        asset_id = 'N/A'
 
     # Dropdown for selecting detailed property address
     selected_address = st.selectbox("Detailed Address", ["Select address at detailed dwelling level"] + list(addresses.keys()))
@@ -97,8 +95,9 @@ def show():
     # Check if a detailed address is selected
     if selected_address != "Select address at detailed dwelling level":
         # Display Dwelling ID and full address if a detailed address is selected
-        dwelling_id, propco = addresses[selected_address]
+        dwelling_id, asset_id, propco = addresses[selected_address]
         st.write(f"Dwelling ID: {dwelling_id}")
+        st.write(f"Asset ID: {asset_id}")
         st.write(f"Propco: {propco}")
     else:
         dwelling_id = 'N/A'
