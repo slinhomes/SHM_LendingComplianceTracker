@@ -1,7 +1,6 @@
-import streamlit as st
 import hmac
-import add_requirements
-import search_requirements
+import streamlit as st
+
 
 def check_password():
     """Returns `True` if the user had the correct password."""
@@ -23,7 +22,7 @@ def check_password():
         "Password", type="password", on_change=password_entered, key="password"
     )
     if "password_correct" in st.session_state:
-        st.error("Password incorrect, please try again.")
+        st.error("😕 Password incorrect")
     return False
 
 
@@ -31,8 +30,13 @@ if not check_password():
     st.stop()  # Do not continue if check_password is not True.
 
 # Main Streamlit app starts here
+st.write("Here goes your normal Streamlit app...")
 st.button("Click me")
 
+
+import streamlit as st
+import add_requirements
+import search_requirements
 
 # Initialize multi-page app setup
 def main():
