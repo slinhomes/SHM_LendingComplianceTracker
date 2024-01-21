@@ -83,20 +83,19 @@ def show():
 
     dwelling_id = "N/A"
 
-    if selected_asset_address:
-        # Display Asset ID and asset address if an asset address is selected
-        asset_id, propco = asset_address[selected_asset_address]
-        st.write(f"Asset ID: {asset_id}")
+    # Display Asset ID and asset address if an asset address is selected
+    asset_id, propco = asset_address[selected_asset_address]
+    st.write(f"Asset ID: {asset_id}")
+    st.write(f"Propco: {propco}")
+
+    # Dropdown for selecting detailed property address
+    selected_address = st.selectbox("Detailed Address", ["Select address at detailed dwelling level."] + list(addresses.keys()))
+    # Check if a detailed address is selected
+    if selected_address != "Select address at detailed dwelling level.":
+        # Display Dwelling ID and full address if a detailed address is selected
+        dwelling_id, propco = addresses[selected_address]
+        st.write(f"Dwelling ID: {dwelling_id}")
         st.write(f"Propco: {propco}")
-    else:
-        # Dropdown for selecting detailed property address
-        selected_address = st.selectbox("Detailed Address", ["Select address at detailed dwelling level."] + list(addresses.keys()))
-        # Check if a detailed address is selected
-        if selected_address != "Select address at detailed dwelling level.":
-            # Display Dwelling ID and full address if a detailed address is selected
-            dwelling_id, propco = addresses[selected_address]
-            st.write(f"Dwelling ID: {dwelling_id}")
-            st.write(f"Propco: {propco}")
 
     # Dropdown for selecting a Lender and Requirements
     lender = st.selectbox("Lender", ["Santander", "Aburthnott"])
