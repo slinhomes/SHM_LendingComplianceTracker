@@ -19,6 +19,7 @@ def create_table(conn):
     try:
         sql = '''CREATE TABLE [dbo].[SHMLendingCompliance] (
                 [Dwelling_ID] NVARCHAR(50) NULL,
+                [Asset_ID] NVARCHAR(50) NULL,
                 [lender] NVARCHAR(50) NULL,
                 [condition_title] NVARCHAR(100) NULL,
                 [reference] NVARCHAR(100) NULL,
@@ -45,7 +46,7 @@ def create_table(conn):
 
 # Function to insert data into the SHMLendingCompliance table
 def insert_data(conn, data):
-    insert_sql = '''INSERT INTO SHMLendingCompliance (Dwelling_ID, lender, condition_title, reference, requirements, 
+    insert_sql = '''INSERT INTO SHMLendingCompliance (Dwelling_ID, Asset_ID,lender, condition_title, reference, requirements, 
                    action_req, trigger_date, deadline_period, deadline_date, fst_reminder, fnl_reminder, recurrence, 
                    loc8me_contact, shm_team, shm_individual, shm_bu, added_by, entry_date)
                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);'''
@@ -70,13 +71,20 @@ def show():
     # Connect to the database and fetch property addresses and IDs
     conn = create_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT Dwelling_ID, flat_number, property_address, city, propco FROM SHMDwellingInfo")
+    cursor.execute("SELECT Dwelling_ID, Asset_ID, flat_number, property_address, city, propco FROM SHMDwellingInfo")
     rows = cursor.fetchall()
-    addresses = {f'{row[1]} {row[2]}, {row[3]}': (row[0], row[4]) for row in rows}  # Mapping address to DwellingID and propco
+    asset_address =  {f'{row[3]}, {row[4]}': (row[0], row[5]) for row in rows}  # Mapping asset address to AssetID and propco
+    addresses = {f'{row[2]} {row[3]}, {row[4]}': (row[0], row[5]) for row in rows}  # Mapping detailed address to DwellingID and propco
 
     # Dropdown for selecting property address
-    selected_address = st.selectbox("Property Address", list(addresses.keys()))
+    selected_asset_address = st.selectbox("Property Address", list(asset_address.keys()))
+    # Display Dwelling ID and full address
+    asset_id, propco = asset_address[selected_asset_address]
+    st.write(f"Asset ID: {dwelling_id}")
+    st.write(f"Propco: {propco}")
 
+    # Dropdown for selecting property address
+    selected_address = st.selectbox("Detailed Address", list(addresses.keys()))
     # Display Dwelling ID and full address
     dwelling_id, propco = addresses[selected_address]
     st.write(f"Dwelling ID: {dwelling_id}")
@@ -133,7 +141,9 @@ def show():
     # Collect data into a DataFrame for preview
     data = {
         "Dwelling ID": dwelling_id,
-        "Property": selected_address,
+        "Asset ID": asset_id,
+        "Property": selected_asset_address,
+        "Detailed Address (if applicable)": selected_address,
         "Lender": lender,
         "Condition Title": condition_title,
         "Reference": reference,
@@ -142,6 +152,8 @@ def show():
         "Trigger Date": trigger_date,
         "Deadline Period (days)": deadline_period,
         "Deadline": deadline_date,
+        "First reminder": fst_reminder,
+        "Final reminder": fnl_reminder,
         "Loc8me Contact": loc8me_contact,
         "SHM team resopnsible": shm_team,
         "SHM invidual responsible": shm_individual,
@@ -165,7 +177,7 @@ def show():
     if submit_button:
         # Prepare the data tuple for database insertion
         data_tuple = (
-            dwelling_id, lender, condition_title, reference, requirements, 
+            dwelling_id, asset_id, lender, condition_title, reference, requirements, 
             action_req, trigger_date, deadline_period, deadline_date, fst_reminder,
             fnl_reminder, recurrence, loc8me_contact, shm_team, shm_individual,
             shm_bu, added_by, entry_date #... other fields as needed
