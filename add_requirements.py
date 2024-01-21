@@ -73,22 +73,24 @@ def show():
     cursor = conn.cursor()
     cursor.execute("SELECT Dwelling_ID, Asset_ID, flat_number, property_address, city, propco FROM SHMDwellingInfo")
     rows = cursor.fetchall()
-    asset_address =  {f'{row[3]}, {row[4]}': (row[0], row[5]) for row in rows}  # Mapping asset address to AssetID and propco
+    asset_address =  {f'{row[3]}, {row[4]}': (row[1], row[5]) for row in rows}  # Mapping asset address to AssetID and propco
     addresses = {f'{row[2]} {row[3]}, {row[4]}': (row[0], row[5]) for row in rows}  # Mapping detailed address to DwellingID and propco
 
-    # Dropdown for selecting property address
-    selected_asset_address = st.selectbox("Property Address", list(asset_address.keys()))
-    # Display Dwelling ID and full address
-    # asset_id, propco = asset_address[selected_asset_address]
-    # st.write(f"Asset ID: {asset_id}")
-    # st.write(f"Propco: {propco}")
+    # Dropdown for selecting asset address
+    selected_asset_address = st.selectbox("Asset Address", [""] + list(asset_address.keys()))
 
-    # Dropdown for selecting property address
-    selected_address = st.selectbox("Detailed Address", list(addresses.keys()))
-    # Display Dwelling ID and full address
-    dwelling_id, propco = addresses[selected_address]
-    st.write(f"Dwelling ID: {dwelling_id}")
-    st.write(f"Propco: {propco}")
+    if selected_asset_address:
+        # Display Asset ID and asset address if an asset address is selected
+        asset_id, propco = asset_address[selected_asset_address]
+        st.write(f"Asset ID: {asset_id}")
+        st.write(f"Propco: {propco}")
+    else:
+        # Dropdown for selecting detailed property address
+        selected_address = st.selectbox("Detailed Address", list(addresses.keys()))
+        # Display Dwelling ID and full address if a detailed address is selected
+        dwelling_id, propco = addresses[selected_address]
+        st.write(f"Dwelling ID: {dwelling_id}")
+        st.write(f"Propco: {propco}")
 
     # Dropdown for selecting a Lender and Requirements
     lender = st.selectbox("Lender", ["Santander", "Aburthnott"])
