@@ -77,7 +77,7 @@ def show():
     addresses = {f'{row[2]} {row[3]}, {row[4]}': (row[0], row[5]) for row in rows}  # Mapping detailed address to DwellingID and propco
 
     # Dropdown for selecting asset address
-    selected_asset_address = st.selectbox("Asset Address", ["Find addresses at dwelling level"] + list(asset_address.keys()))
+    selected_asset_address = st.selectbox("Asset Address", [""] + list(asset_address.keys()))
 
     if selected_asset_address:
         # Display Asset ID and asset address if an asset address is selected
