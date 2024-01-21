@@ -1,4 +1,5 @@
 streamlit
 pyodbc
 python-dotenv
+re
 hmac
