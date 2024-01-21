@@ -8,10 +8,10 @@ def main():
     st.sidebar.title("Main Menu")
 
     # Custom labels with HTML for spacing
-    page_labels = ["Add Requirements", "&nbsp;", "Search for Existing Requirements"]
+    page_labels = ["Add Requirements", "Search for Existing Requirements"]
 
     # Sidebar for page navigation
-    selected_label = st.sidebar.radio("Select a page:", page_labels, format_func=lambda x: x.replace("&nbsp;", " "))
+    selected_label = st.sidebar.radio("Select a page:", page_labels)
 
     # Map the labels to functions
     app_pages = {
