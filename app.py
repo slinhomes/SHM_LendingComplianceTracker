@@ -1,7 +1,7 @@
 import hmac
 import streamlit as st
 
-
+# Ask for password before user opens the page
 def check_password():
     """Returns `True` if the user had the correct password."""
 
@@ -13,7 +13,7 @@ def check_password():
         else:
             st.session_state["password_correct"] = False
 
-    # Return True if the password is validated.
+    # Return True if the passward is validated.
     if st.session_state.get("password_correct", False):
         return True
 
@@ -22,17 +22,14 @@ def check_password():
         "Password", type="password", on_change=password_entered, key="password"
     )
     if "password_correct" in st.session_state:
-        st.error("😕 Password incorrect")
+        st.error("""Password incorrect! 
+                 Please try again.""")
+        st.caption("Email slin@studenthomesmgmt.com to report any system error.")
     return False
-
 
 if not check_password():
     st.stop()  # Do not continue if check_password is not True.
-
-# Main Streamlit app starts here
-st.write("Here goes your normal Streamlit app...")
-st.button("Click me")
-
+    
 
 import streamlit as st
 import add_requirements
