@@ -79,9 +79,9 @@ def show():
     # Dropdown for selecting property address
     selected_asset_address = st.selectbox("Property Address", list(asset_address.keys()))
     # Display Dwelling ID and full address
-    asset_id, propco = asset_address[selected_asset_address]
-    st.write(f"Asset ID: {asset_id}")
-    st.write(f"Propco: {propco}")
+    # asset_id, propco = asset_address[selected_asset_address]
+    # st.write(f"Asset ID: {asset_id}")
+    # st.write(f"Propco: {propco}")
 
     # Dropdown for selecting property address
     selected_address = st.selectbox("Detailed Address", list(addresses.keys()))
