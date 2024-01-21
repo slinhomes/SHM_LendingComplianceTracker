@@ -11,7 +11,7 @@ def main():
     page_labels = ["Add Requirements", "&nbsp;", "Search for Existing Requirements"]
 
     # Sidebar for page navigation
-    selected_label = st.sidebar.radio("Select a page:", page_labels, format_func=lambda x: x.replace("&nbsp;", ""))
+    selected_label = st.sidebar.radio("Select a page:", page_labels, format_func=lambda x: x.replace("&nbsp;", " "))
 
     # Map the labels to functions
     app_pages = {
