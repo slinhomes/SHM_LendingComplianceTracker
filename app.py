@@ -5,14 +5,12 @@ import search_requirements
 # Initialize multi-page app setup
 def main():
     st.set_page_config(page_title="SHM Lending Compliance Report", layout="wide")
-    st.sidebar.title("Navigation")
-    app_pages = {
-        "Add Requirements": add_requirements.show,
-        "Search for Existing Requirements": search_requirements.show,
-    }
+    st.sidebar.title("Main Menu")
 
-    # Sidebar for page navigation
-    selected_page = st.sidebar.radio("Select a page:", list(app_pages.keys()))
+    # Adding space between links in the sidebar
+    st.sidebar.radio("Select a page:", ["Add Requirements"])
+    st.sidebar.markdown("<br><br>", unsafe_allow_html=True)  # Adding space
+    st.sidebar.radio("Select a page:", ["Search for Existing Requirements"], index=1)
 
     # Display selected page
     st.title("SHM Lending Compliance Report")
