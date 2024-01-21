@@ -21,7 +21,7 @@ def main():
 
     # Display selected page
     st.title("SHM Lending Compliance Report")
-    app_pages[selected_page]()
+    app_pages[selected_label]()
 
 if __name__ == "__main__":
     main()
