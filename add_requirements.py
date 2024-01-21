@@ -81,7 +81,7 @@ def show():
     # Dropdown for selecting asset address
     selected_asset_address = st.selectbox("Asset Address", [""] + list(asset_address.keys()))
 
-    dwelling_id = asset_id = propco = ""
+    #dwelling_id = asset_id = propco = ""
     if selected_asset_address:
         # Display Asset ID and asset address if an asset address is selected
         asset_id, propco = asset_address[selected_asset_address]
