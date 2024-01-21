@@ -1,6 +1,6 @@
 import streamlit as st
 import pyodbc
-import re
+# import re
 import pandas as pd
 
 # Function to connect to the Azure SQL database
@@ -57,13 +57,13 @@ def insert_data(conn, data):
     conn.commit()
 
 # Function to validate email
-def is_valid_email(email):
-    # Regular expression for validating an email
-    regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
-    if re.fullmatch(regex, email):
-        return True
-    else:
-        return False
+# def is_valid_email(email):
+#     # Regular expression for validating an email
+#     regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+#     if re.fullmatch(regex, email):
+#         return True
+#     else:
+#         return False
 
 def show():
     #st.write("Welcome to the Add Requirements Page")
