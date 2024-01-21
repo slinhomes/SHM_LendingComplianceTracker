@@ -88,6 +88,8 @@ def show():
         asset_id, propco = asset_address[selected_asset_address]
         st.write(f"Asset ID: {asset_id}")
         st.write(f"Propco: {propco}")
+    else:
+        asset_id = 'N/A'
 
     # Dropdown for selecting detailed property address
     selected_address = st.selectbox("Detailed Address", ["Select address at detailed dwelling level"] + list(addresses.keys()))
@@ -98,6 +100,8 @@ def show():
         dwelling_id, propco = addresses[selected_address]
         st.write(f"Dwelling ID: {dwelling_id}")
         st.write(f"Propco: {propco}")
+    else:
+        dwelling_id = 'N/A'
 
     # Dropdown for selecting a Lender and Requirements
     lender = st.selectbox("Lender", ["Santander", "Aburthnott"])
