@@ -73,7 +73,7 @@ def show():
 
             result_df = result_df[['condition_title','reference','requirements','action_req','deadline_date','shm_team','shm_bu','added_by','entry_date']]
             result_df.columns = ['Condition title','Reference','Requirements','Action needed','Deadline','SHM team responsible','SHM BU lead','Condition added by','Condition added on']
-            result_df = result_df.set_index('condition_title')
+            result_df = result_df.set_index('Condition title')
 
             # Display the result
             st.write("Search Results:")
