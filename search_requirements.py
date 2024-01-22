@@ -21,19 +21,21 @@ def show():
     # Connect to the database and fetch property addresses and IDs
     conn = create_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT DISTINCT Asset_Address, Dwelling_Address, Lender FROM SHMLendingCompliance")
+    cursor.execute("SELECT DISTINCT Asset_Address, Dwelling_Address, Lender, condition_title FROM SHMLendingCompliance")
     rows = cursor.fetchall()
 
     # Separate the fetched data into individual lists
     asset_addresses = [row[0] for row in rows]
     dwelling_addresses = [row[1] for row in rows]
     lenders = [row[2] for row in rows]
+    condition_title = [row[3] for row in rows]
 
     # Search bars
     selected_asset_address = st.selectbox("Property", [""] + asset_addresses)
     selected_dwelling_address = st.selectbox("Detailed Address", [""] + dwelling_addresses, 
                                              placeholder="Only select this if you are looking for requirements at dwelling level")
     selected_lender = st.selectbox("Lender", [""] + lenders)
+    selected_condition_title = st.selectbox("Condition title", [""] + condition_title)
 
     # Search button
     if st.button('Search'):
@@ -42,21 +44,25 @@ def show():
         params = []
         
         if selected_asset_address:
-            query += " AND Asset_Address = ?"
+            query += " AND Asset_address = ?"
             params.append(selected_asset_address)
 
         if selected_dwelling_address:
-            query += " AND Dwelling_Address = ?"
+            query += " AND Dwelling_address = ?"
             params.append(selected_dwelling_address)
 
         if selected_lender:
-            query += " AND Lender = ?"
+            query += " AND lender = ?"
             params.append(selected_lender)
+
+        if selected_condition_title:
+            query += " AND condition_title = ?"
+            params.append(selected_condition_title)
 
         # Execute the query
         cursor = conn.cursor()
         cursor.execute(query, params)
-        
+
         # Fetch all rows and column names
         result_rows = cursor.fetchall()
         if result_rows:
@@ -64,6 +70,8 @@ def show():
 
             # Convert the result to a pandas DataFrame
             result_df = pd.DataFrame.from_records(result_rows, columns=result_columns)
+
+            result_df = result_df[['condition_title','reference','requirements','action_req','deadline','shm_team','shm_bu','added_by','entry_date']]
 
             # Display the result
             st.write("Search Results:")
