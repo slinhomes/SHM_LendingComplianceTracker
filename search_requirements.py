@@ -90,7 +90,7 @@ def show():
             
             # Convert the result to a pandas DataFrame
             result_df = pd.DataFrame.from_records(result_rows, columns=result_columns)
-            result_df.set_index('Condition title', inplace=True)
+            #result_df.set_index('Condition title', inplace=True)
 
             # Add a column for 'Completed_by' initials
             result_df['Completed_by'] = ''
