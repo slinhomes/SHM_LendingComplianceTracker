@@ -84,13 +84,13 @@ def show():
         result_rows = cursor.fetchall()
         if result_rows:
             # Define the columns to display
-            result_columns = ["Condition title", "Reference", "Requirements", 
+            result_columns = ["UID", "Condition title", "Reference", "Requirements", 
                               "Action needed", "First reminder", "Deadline", 
                               "SHM team responsible", "Condition added by", "Condition added on"]
             
             # Convert the result to a pandas DataFrame
             result_df = pd.DataFrame.from_records(result_rows, columns=result_columns)
-            result_df = result_df.set_index('Condition title')
+            result_df = result_df.set_index('UID')
 
             # Add a column for 'Completed_by' initials
             result_df['Completed_by'] = ''
