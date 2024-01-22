@@ -21,6 +21,8 @@ def create_table(conn):
                 [UID] UNIQUEIDENTIFIER DEFAULT NEWID() PRIMARY KEY,
                 [Dwelling_ID] NVARCHAR(50) NULL,
                 [Asset_ID] NVARCHAR(50) NULL,
+                [Asset_address] NVARCHAR(MAX) NULL,
+                [Dwelling_address] NVARCHAR(MAX) NULL,
                 [lender] NVARCHAR(50) NULL,
                 [condition_title] NVARCHAR(100) NULL,
                 [reference] NVARCHAR(100) NULL,
@@ -47,7 +49,7 @@ def create_table(conn):
 
 # Function to insert data into the SHMLendingCompliance table
 def insert_data(conn, data):
-    insert_sql = '''INSERT INTO SHMLendingCompliance (Dwelling_ID, Asset_ID, lender, condition_title, reference, requirements, 
+    insert_sql = '''INSERT INTO SHMLendingCompliance (Dwelling_ID, Asset_ID, Asset_address, Dwelling_address, lender, condition_title, reference, requirements, 
                    action_req, trigger_date, deadline_period, deadline_date, fst_reminder, fnl_reminder, recurrence, 
                    loc8me_contact, shm_team, shm_individual, shm_bu, added_by, entry_date)
                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);'''
@@ -190,7 +192,8 @@ def show():
     if submit_button:
         # Prepare the data tuple for database insertion
         data_tuple = (
-            dwelling_id, asset_id, lender, condition_title, reference, requirements, 
+            dwelling_id, asset_id, selected_asset_address, selected_address, lender, 
+            condition_title, reference, requirements, 
             action_req, trigger_date, deadline_period, deadline_date, fst_reminder,
             fnl_reminder, recurrence, loc8me_contact, shm_team, shm_individual,
             shm_bu, added_by, entry_date #... other fields as needed
