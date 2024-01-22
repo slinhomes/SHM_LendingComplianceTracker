@@ -30,8 +30,8 @@ def show():
 
     # Search bars
     selected_asset_address = st.selectbox("Property", [""] + asset_addresses)
-    selected_dwelling_address = st.selectbox("Detailed Address", [""] + dwelling_addresses)
-    st.caption("Note: only select this field if you are looking for dwelling level requirements.")
+    selected_dwelling_address = st.selectbox("Detailed Address", [""] + dwelling_addresses, 
+                                             placeholder="Only select this if you are looking for requirements at dwelling level")
     selected_lender = st.selectbox("Lender", [""] + lenders)
 
     # More code
