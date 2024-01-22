@@ -56,15 +56,20 @@ def show():
         # Execute the query
         cursor = conn.cursor()
         cursor.execute(query, params)
+        
+        # Fetch all rows and column names
         result_rows = cursor.fetchall()
-        result_columns = [column[0] for column in cursor.description]
+        if result_rows:
+            result_columns = [column[0] for column in cursor.description]
 
-        # Convert the result to a pandas DataFrame
-        result_df = pd.DataFrame(result_rows, columns=result_columns)
+            # Convert the result to a pandas DataFrame
+            result_df = pd.DataFrame.from_records(result_rows, columns=result_columns)
 
-        # Display the result
-        st.write("Existing requirements:")
-        st.dataframe(result_df)
+            # Display the result
+            st.write("Search Results:")
+            st.dataframe(result_df)
+        else:
+            st.write("No results found matching the criteria.")
     
 
 
