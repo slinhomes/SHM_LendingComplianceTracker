@@ -1,4 +1,5 @@
 import streamlit as st
+import pyodbc
 
 # Function to connect to the Azure SQL database
 def create_connection():
