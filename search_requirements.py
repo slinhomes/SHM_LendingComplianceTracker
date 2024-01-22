@@ -1,5 +1,6 @@
 import streamlit as st
 import pyodbc
+import pandas as pd
 
 # Function to connect to the Azure SQL database
 def create_connection():
@@ -34,7 +35,36 @@ def show():
                                              placeholder="Only select this if you are looking for requirements at dwelling level")
     selected_lender = st.selectbox("Lender", [""] + lenders)
 
-    # More code
+    # Search button
+    if st.button('Search'):
+        # Construct the SQL query based on selected criteria
+        query = "SELECT * FROM SHMLendingCompliance WHERE 1=1"  # Base query
+        params = []
+        
+        if selected_asset_address:
+            query += " AND Asset_Address = ?"
+            params.append(selected_asset_address)
 
+        if selected_dwelling_address:
+            query += " AND Dwelling_Address = ?"
+            params.append(selected_dwelling_address)
+
+        if selected_lender:
+            query += " AND Lender = ?"
+            params.append(selected_lender)
+
+        # Execute the query
+        cursor = conn.cursor()
+        cursor.execute(query, params)
+        result_rows = cursor.fetchall()
+        result_columns = [column[0] for column in cursor.description]
+
+        # Convert the result to a pandas DataFrame
+        result_df = pd.DataFrame(result_rows, columns=result_columns)
+
+        # Display the result
+        st.write("Existing requirements:")
+        st.dataframe(result_df)
+    
 
 
