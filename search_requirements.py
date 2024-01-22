@@ -71,7 +71,7 @@ def show():
             # Convert the result to a pandas DataFrame
             result_df = pd.DataFrame.from_records(result_rows, columns=result_columns)
 
-            result_df = result_df[['condition_title','reference','requirements','action_req','deadline','shm_team','shm_bu','added_by','entry_date']]
+            result_df = result_df[['condition_title','reference','requirements','action_req','deadline_date','shm_team','shm_bu','added_by','entry_date']]
 
             # Display the result
             st.write("Search Results:")
