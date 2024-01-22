@@ -99,14 +99,30 @@ def show():
             # Display the result
             st.write("Search Results:")
             # st.dataframe(result_df)
-            for uid, row in result_df.iterrows():
-                st.write(row)
-                initials = st.text_input(f"Enter initials to mark as complete for '{uid}'", key=f"initials_{uid}")
-                if initials:
-                    # Assuming UID is included in the result_rows
-                    update_completion_status(conn, uid, initials)
-                    st.success(f"Marked as completed by {initials} for '{uid}'")
-                    break  # Break to update one record at a time
+            # for uid, row in result_df.iterrows():
+            #     st.write(row)
+            #     initials = st.text_input(f"Enter initials to mark as complete for '{uid}'", key=f"initials_{uid}")
+            #     if initials:
+            #         # Assuming UID is included in the result_rows
+            #         update_completion_status(conn, uid, initials)
+            #         st.success(f"Marked as completed by {initials} for '{uid}'")
+            #         break  # Break to update one record at a time
+
+            st.data_editor(result_df, hide_index=True, 
+                           column_config = {
+                               "UID": st.column_config.TextColumn(),
+                               "Condition title": st.column_config.TextColumn(),
+                               "Reference": st.column_config.TextColumn(),
+                               "Requirements": st.column_config.TextColumn(),
+                               "Action needed": st.column_config.TextColumn(),
+                               "First reminder": st.column_config.DateColumn(),
+                               "Deadline": st.column_config.DateColumn(),
+                               "SHM team responsible": st.column_config.TextColumn(),
+                               "Condition added by": st.column_config.TextColumn(),
+                               "Condition added on": st.column_config.DateColumn(),
+                               "Completed by": st.column_config.TextColumn()
+                           },
+                           disabled=result_columns)
 
         else:
             st.write("No results found matching the criteria.")
