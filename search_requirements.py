@@ -50,7 +50,7 @@ def show():
     if st.button('Search'):
         # Construct the SQL query based on selected criteria
         query = """
-        SELECT SHMLendingCompliance.condition_title, SHMLendingCompliance.reference, 
+        SELECT SHMLendingCompliance.uid, SHMLendingCompliance.condition_title, SHMLendingCompliance.reference, 
                SHMLendingCompliance.requirements, SHMLendingCompliance.action_req, SHMLendingCompliance.fst_reminder, 
                SHMLendingCompliance.deadline_date, TeamDirectory.team, 
                SHMLendingCompliance.added_by, SHMLendingCompliance.entry_date
@@ -82,6 +82,7 @@ def show():
 
         # Fetch all rows and column names
         result_rows = cursor.fetchall()
+
         if result_rows:
             # Define the columns to display
             result_columns = ["UID", "Condition title", "Reference", "Requirements", 
