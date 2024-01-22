@@ -150,7 +150,7 @@ def show():
     shm_team = st.text_input("SHM team responsible", placeholder="Please add team initial") 
     shm_individual = st.text_input("SHM individual responsible", placeholder="Please add email address")
     shm_bu = st.text_input("SHM BU lead", placeholder="Please add email address")
-    added_by = st.text_input("Added by", placeholder="Please add your initials")
+    added_by = st.text_input("Added by", placeholder="Please add your email address")
     entry_date = st.date_input("Requirement added on")
 
     # Collect data into a DataFrame for preview
