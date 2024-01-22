@@ -40,23 +40,31 @@ def show():
     # Search button
     if st.button('Search'):
         # Construct the SQL query based on selected criteria
-        query = "SELECT * FROM SHMLendingCompliance WHERE 1=1"  # Base query
+        query = """
+        SELECT SHMLendingCompliance.condition_title, SHMLendingCompliance.reference, 
+               SHMLendingCompliance.requirements, SHMLendingCompliance.action_req, 
+               SHMLendingCompliance.deadline_date, TeamDirectory.team, 
+               SHMLendingCompliance.added_by, SHMLendingCompliance.entry_date
+        FROM SHMLendingCompliance 
+        LEFT JOIN TeamDirectory ON SHMLendingCompliance.shm_team = TeamDirectory.team_member_emails
+        WHERE 1=1
+        """
         params = []
         
         if selected_asset_address:
-            query += " AND Asset_address = ?"
+            query += " AND SHMLendingCompliance.Asset_address = ?"
             params.append(selected_asset_address)
 
         if selected_dwelling_address:
-            query += " AND Dwelling_address = ?"
+            query += " AND SHMLendingCompliance.Dwelling_address = ?"
             params.append(selected_dwelling_address)
 
         if selected_lender:
-            query += " AND lender = ?"
+            query += " AND SHMLendingCompliance.lender = ?"
             params.append(selected_lender)
 
         if selected_condition_title:
-            query += " AND condition_title = ?"
+            query += " AND SHMLendingCompliance.condition_title = ?"
             params.append(selected_condition_title)
 
         # Execute the query
@@ -66,13 +74,11 @@ def show():
         # Fetch all rows and column names
         result_rows = cursor.fetchall()
         if result_rows:
-            result_columns = [column[0] for column in cursor.description]
+            result_columns = ["Condition title", "Reference", "Requirements", "Action needed", "Deadline", "SHM team responsible", "Condition added by", "Condition added on"]
 
             # Convert the result to a pandas DataFrame
             result_df = pd.DataFrame.from_records(result_rows, columns=result_columns)
 
-            result_df = result_df[['condition_title','reference','requirements','action_req','deadline_date','shm_team','shm_bu','added_by','entry_date']]
-            result_df.columns = ['Condition title','Reference','Requirements','Action needed','Deadline','SHM team responsible','SHM BU lead','Condition added by','Condition added on']
             result_df = result_df.set_index('Condition title')
 
             # Display the result
