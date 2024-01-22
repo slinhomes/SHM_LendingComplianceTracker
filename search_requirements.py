@@ -13,6 +13,15 @@ def create_connection():
         f'DRIVER={driver};SERVER={server};PORT=1433;DATABASE={database};UID={username};PWD={password}')
     return conn
 
+def update_completion_status(conn, uid, completed_by):
+    try:
+        sql = '''UPDATE SHMLendingCompliance SET Completed_by = ? WHERE UID = ?;'''
+        cur = conn.cursor()
+        cur.execute(sql, (completed_by, uid))
+        conn.commit()
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
 def show():
     st.write("Welcome to the Search for Existing Compliance Requirements Page")
     st.caption("Please note that this site is currently under development.")
@@ -42,7 +51,7 @@ def show():
         # Construct the SQL query based on selected criteria
         query = """
         SELECT SHMLendingCompliance.condition_title, SHMLendingCompliance.reference, 
-               SHMLendingCompliance.requirements, SHMLendingCompliance.action_req, 
+               SHMLendingCompliance.requirements, SHMLendingCompliance.action_req, SHMLendingCompliance.fst_reminder, 
                SHMLendingCompliance.deadline_date, TeamDirectory.team, 
                SHMLendingCompliance.added_by, SHMLendingCompliance.entry_date
         FROM SHMLendingCompliance 
@@ -74,16 +83,29 @@ def show():
         # Fetch all rows and column names
         result_rows = cursor.fetchall()
         if result_rows:
-            result_columns = ["Condition title", "Reference", "Requirements", "Action needed", "Deadline", "SHM team responsible", "Condition added by", "Condition added on"]
-
+            # Define the columns to display
+            result_columns = ["UID", "Condition title", "Reference", "Requirements", "Action needed", 
+                              "First reminder", "Deadline", "SHM team responsible", "Condition added by", 
+                              "Condition added on"]
+            
             # Convert the result to a pandas DataFrame
             result_df = pd.DataFrame.from_records(result_rows, columns=result_columns)
+            result_df.set_index('Condition title', inplace=True)
 
-            result_df = result_df.set_index('Condition title')
+            # Add a column for 'Completed_by' initials
+            result_df['Completed_by'] = ''
 
             # Display the result
             st.write("Search Results:")
-            st.dataframe(result_df)
+            # st.dataframe(result_df)
+            for index, row in result_df.iterrows():
+                st.write(row)
+                initials = st.text_input(f"Enter initials to mark as complete (UID: {row['UID']})", key=f"initials_{row['UID']}")
+                if initials:
+                    update_completion_status(conn, row['UID'], initials)
+                    st.success(f"Marked as completed by {initials} (UID: {row['UID']})")
+                    break  # Break to update one record at a time
+
         else:
             st.write("No results found matching the criteria.")
     
