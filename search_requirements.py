@@ -92,67 +92,31 @@ def show():
         result_rows = cursor.fetchall()
 
         if result_rows:
-            # Define the columns to display
             result_columns = ["UID", "Condition title", "Reference", "Requirements", 
                               "Action needed", "First reminder", "Deadline", 
                               "SHM team responsible", "Condition added by", "Condition added on"]
             
-            # Convert the result to a pandas DataFrame
             result_df = pd.DataFrame.from_records(result_rows, columns=result_columns)
             result_df = result_df.set_index('UID')
 
-            # Add a column for 'Completed_by' initials
-            result_df['Completed_by'] = ''
-
-            # Display the result
             st.write("Search Results:")
-            # st.dataframe(result_df)
-            # for uid, row in result_df.iterrows():
-            #     st.write(row)
-            #     initials = st.text_input(f"Enter initials to mark as complete for '{uid}'", key=f"initials_{uid}")
-            #     if initials:
-            #         # Assuming UID is included in the result_rows
-            #         update_completion_status(conn, uid, initials)
-            #         st.success(f"Marked as completed by {initials} for '{uid}'")
-            #         break  # Break to update one record at a time
+            st.dataframe(result_df)
 
-            edited_df = st.data_editor(result_df, hide_index=True, width=1000, 
-                           column_config = {
-                               "UID": st.column_config.TextColumn(),
-                               "Condition title": st.column_config.TextColumn(),
-                               "Reference": st.column_config.TextColumn(),
-                               "Requirements": st.column_config.TextColumn(),
-                               "Action needed": st.column_config.TextColumn(),
-                               "First reminder": st.column_config.DateColumn(),
-                               "Deadline": st.column_config.DateColumn(),
-                               "SHM team responsible": st.column_config.TextColumn(),
-                               "Condition added by": st.column_config.TextColumn(),
-                               "Condition added on": st.column_config.DateColumn(),
-                               "Completed by": st.column_config.TextColumn()
-                           },
-                           disabled=["UID", "Condition title", "Reference", "Requirements", 
-                              "Action needed", "SHM team responsible","Condition added by","Condition added on"])
-            
-            # Update button
-            if st.button('Update Database'):
-                try:
-                    for uid in edited_df.index:
-                        if not edited_df.loc[uid, :].equals(result_df.loc[uid, :]):
-                            # Fetch the edited data
-                            edited_data = edited_df.loc[uid]
-                            first_reminder = edited_data['First reminder']
-                            deadline = edited_data['Deadline']
-                            completed_by = edited_data['Completed by']
+            st.markdown("---")
+            st.write("Update Compliance Requirement")
 
-                            # Update database for this UID
-                            update_database(conn, uid, first_reminder, deadline, completed_by)
-                            st.success(f'Updated UID: {uid}')
-                except Exception as e:
-                    st.error(f"An error occurred while updating the database: {e}")
+            # User inputs for updating a record
+            uid_to_update = st.selectbox("Select UID to Update", result_df.index)
+            new_first_reminder = st.date_input("New First Reminder")
+            new_deadline = st.date_input("New Deadline")
+            new_completed_by = st.text_input("Completed By (Initials)")
 
-
+            if st.button('Update Record'):
+                update_database(conn, uid_to_update, new_first_reminder, new_deadline, new_completed_by)
+                st.success(f'Updated record for UID: {uid_to_update}')
         else:
             st.write("No results found matching the criteria.")
+
     
 
 
