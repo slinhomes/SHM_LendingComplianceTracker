@@ -135,17 +135,20 @@ def show():
             
             # Update button
             if st.button('Update Database'):
-                for uid in edited_df.index:
-                    if not edited_df.loc[uid, :].equals(result_df.loc[uid, :]):
-                        # Fetch the edited data
-                        edited_data = edited_df.loc[uid]
-                        first_reminder = edited_data['First reminder']
-                        deadline = edited_data['Deadline']
-                        completed_by = edited_data['Completed by']
+                try:
+                    for uid in edited_df.index:
+                        if not edited_df.loc[uid, :].equals(result_df.loc[uid, :]):
+                            # Fetch the edited data
+                            edited_data = edited_df.loc[uid]
+                            first_reminder = edited_data['First reminder']
+                            deadline = edited_data['Deadline']
+                            completed_by = edited_data['Completed by']
 
-                        # Update database for this UID
-                        update_database(conn, uid, first_reminder, deadline, completed_by)
-                        st.success(f'Updated UID: {uid}')
+                            # Update database for this UID
+                            update_database(conn, uid, first_reminder, deadline, completed_by)
+                            st.success(f'Updated UID: {uid}')
+                except Exception as e:
+                    st.error(f"An error occurred while updating the database: {e}")
 
 
         else:
