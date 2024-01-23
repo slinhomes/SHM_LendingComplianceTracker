@@ -29,7 +29,7 @@ def check_password():
 
 if not check_password():
     st.stop()  # Do not continue if check_password is not True.
-    
+
 
 import streamlit as st
 import add_requirements
@@ -37,7 +37,7 @@ import search_requirements
 
 # Initialize multi-page app setup
 def main():
-    st.set_page_config(page_title="SHM Lending Compliance Report", layout="wide")
+    st.set_page_config(page_title="SHM Refi Bank Requirements Portal", layout="wide")
     st.sidebar.title("Main Menu")
 
     # Custom labels with HTML for spacing
