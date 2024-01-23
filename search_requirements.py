@@ -95,7 +95,7 @@ def show():
             # Define the columns to display
             result_columns = ["UID", "Condition title", "Reference", "Requirements", 
                               "Action needed", "First reminder", "Deadline", 
-                              "SHM team responsible", "Condition added by", "Condition added on"]
+                              "SHM team responsible"]
             
             # Convert the result to a pandas DataFrame
             result_df = pd.DataFrame.from_records(result_rows, columns=result_columns)
