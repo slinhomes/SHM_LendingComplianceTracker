@@ -138,7 +138,7 @@ def show():
                             st.success(f'Updated UID: {uid}')
                         
                     # Reset the edited results in session state
-                    st.session_state['search_results'] = pd.DataFrame()
+                    # st.session_state['search_results'] = pd.DataFrame()
                             
     
     else:
