@@ -30,6 +30,8 @@ def show():
     # Initialize session state variables
     if 'search_results' not in st.session_state:
         st.session_state['search_results'] = None
+    if 'edited_results' not in st.session_state:
+        st.session_state['edited_results'] = None
 
     # Connect to the database and fetch property addresses and IDs
     conn = create_connection()
@@ -92,43 +94,53 @@ def show():
                               "Action needed", "First reminder", "Deadline", 
                               "SHM team responsible", "Condition added by", "Condition added on"]
             
-            result_df = pd.DataFrame.from_records(result_rows, columns=result_columns).set_index('UID')
-            result_df['complete_by'] = ""
+            st.session_state['search_results'] = pd.DataFrame.from_records(result_rows, columns=result_columns).set_index('UID')
+            st.session_state['search_results'] = ""
 
-            st.markdown("---")
-            st.write("Search Results:")
+            # Display search results and editor
+            if st.session_state['search_results'] is not None:
 
-            edited_df = st.data_editor(result_df, hide_index=True, 
-                           column_config = {
-                               "UID": st.column_config.TextColumn(),
-                               "Condition title": st.column_config.TextColumn(),
-                               "Reference": st.column_config.TextColumn(),
-                               "Requirements": st.column_config.TextColumn(),
-                               "Action needed": st.column_config.TextColumn(),
-                               "First reminder": st.column_config.DateColumn(),
-                               "Deadline": st.column_config.DateColumn(),
-                               "SHM team responsible": st.column_config.TextColumn(),
-                               "Condition added by": st.column_config.TextColumn(),
-                               "Condition added on": st.column_config.DateColumn(),
-                               "Completed by": st.column_config.TextColumn()
-                           },
-                           disabled=["UID", "Condition title", "Reference", "Requirements", 
-                              "Action needed", "SHM team responsible","Condition added by","Condition added on"])
-            
-            # Update button
-            if st.button('Update Database'):
-                for uid in edited_df.index:
-                    if not edited_df.loc[uid, :].equals(result_df.loc[uid, :]):
-                        # Fetch the edited data
-                        edited_data = edited_df.loc[uid]
-                        first_reminder = edited_data['First reminder']
-                        deadline = edited_data['Deadline']
-                        completed_by = edited_data['Completed by']
+                st.markdown("---")
+                st.write("Search Results:")
 
-                        # Update database for this UID
-                        update_database(conn, uid, first_reminder, deadline, completed_by)
-                        st.success(f'Updated UID: {uid}')
-        
+                st.session_state['edited_results'] = st.data_editor(
+                            st.session_state['edited_results'], 
+                            hide_index=True, 
+                            column_config = {
+                                "UID": st.column_config.TextColumn(),
+                                "Condition title": st.column_config.TextColumn(),
+                                "Reference": st.column_config.TextColumn(),
+                                "Requirements": st.column_config.TextColumn(),
+                                "Action needed": st.column_config.TextColumn(),
+                                "First reminder": st.column_config.DateColumn(),
+                                "Deadline": st.column_config.DateColumn(),
+                                "SHM team responsible": st.column_config.TextColumn(),
+                                "Condition added by": st.column_config.TextColumn(),
+                                "Condition added on": st.column_config.DateColumn(),
+                                "Completed by": st.column_config.TextColumn()
+                            },
+                            disabled=["UID", "Condition title", "Reference", "Requirements", 
+                                "Action needed", "SHM team responsible","Condition added by","Condition added on"])
+                
+                # Update button
+                if st.button('Update Database'):
+                    for uid in st.session_state['edited_results'].index:
+                        if not st.session_state['edited_results'].loc[uid, :].equals(st.session_state['edited_results'].loc[uid, :]):
+                            # Fetch the edited data
+                            edited_data = st.session_state['edited_results'].loc[uid]
+                            first_reminder = edited_data['First reminder']
+                            deadline = edited_data['Deadline']
+                            completed_by = edited_data['Completed by']
+
+                            # Update database for this UID
+                            update_database(conn, uid, first_reminder, 
+                                            deadline, completed_by)
+                            st.success(f'Updated UID: {uid}')
+                        
+                    # Reset the edited results in session state
+                    st.session_state['edited_results'] = None
+                            
+    
     else:
         st.write("To update the database, click 'Update Database'.")
 
