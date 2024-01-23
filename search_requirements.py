@@ -23,7 +23,7 @@ def update_database(conn, uid, fst_reminder, deadline_date, completed_by, comple
     conn.commit()
 
 def show():
-    st.write("Please note that this site is currently under development.")
+    # st.write("Please note that this site is currently under development.")
     # st.caption("Please note that this site is currently under development.")
     st.markdown("---")  # Page breaker
 
