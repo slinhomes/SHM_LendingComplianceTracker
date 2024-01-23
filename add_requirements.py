@@ -137,9 +137,11 @@ def show():
                                     help="If action is required to be completed by X days following the trigger date. Input if applicable.")
     # Calculate the default deadline date
     default_deadline_date = trigger_date + timedelta(days=deadline_period)
-    default_fst_reminder_date = deadline_date - timedelta(days=14)
-    # Date input for Deadline and Reminders
+    # Date input for Deadline
     deadline_date = st.date_input("Deadline", value=default_deadline_date)
+    # Calculate the default reminder date
+    default_fst_reminder_date = deadline_date - timedelta(days=14)
+    # Date input for Reminders
     fst_reminder = st.date_input("Reminder starts on", value=default_fst_reminder_date)
     st.caption("Note: Daily reminders will be sent to individual responsible via email, from the first date of the reminder until the action is complete or the final deadline date.")
     #fnl_reminder = st.date_input("Final reminder")
