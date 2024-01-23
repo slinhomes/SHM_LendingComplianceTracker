@@ -30,8 +30,8 @@ def show():
     # Initialize session state variables
     if 'search_results' not in st.session_state:
         st.session_state['search_results'] = pd.DataFrame()
-    if 'edited_results' not in st.session_state:
-        st.session_state['edited_results'] = None
+    # if 'edited_results' not in st.session_state:
+    #     st.session_state['edited_results'] = None
 
     # Connect to the database and fetch property addresses and IDs
     conn = create_connection()
@@ -95,16 +95,16 @@ def show():
                               "SHM team responsible", "Condition added by", "Condition added on"]
             
             st.session_state['search_results'] = pd.DataFrame.from_records(result_rows, columns=result_columns).set_index('UID')
-            st.session_state['search_results'] = ""
+            st.session_state['search_results']['Completed by'] = ""
 
             # Display search results and editor
-            if st.session_state['search_results'] is not None:
+            if not st.session_state['search_results'].empty:
 
                 st.markdown("---")
                 st.write("Search Results:")
 
-                st.session_state['edited_results'] = st.data_editor(
-                            st.session_state['edited_results'], 
+                edited_df = st.data_editor(
+                            st.session_state['search_results'], 
                             hide_index=True, 
                             column_config = {
                                 "UID": st.column_config.TextColumn(),
@@ -124,10 +124,10 @@ def show():
                 
                 # Update button
                 if st.button('Update Database'):
-                    for uid in st.session_state['edited_results'].index:
-                        if not st.session_state['edited_results'].loc[uid, :].equals(st.session_state['edited_results'].loc[uid, :]):
+                    for uid in edited_df.index:
+                        if not edited_df.loc[uid, :].equals(st.session_state['search_results'].loc[uid, :]):
                             # Fetch the edited data
-                            edited_data = st.session_state['edited_results'].loc[uid]
+                            edited_data = edited_df.loc[uid]
                             first_reminder = edited_data['First reminder']
                             deadline = edited_data['Deadline']
                             completed_by = edited_data['Completed by']
@@ -138,7 +138,7 @@ def show():
                             st.success(f'Updated UID: {uid}')
                         
                     # Reset the edited results in session state
-                    st.session_state['edited_results'] = None
+                    st.session_state['search_results'] = pd.DataFrame()
                             
     
     else:
