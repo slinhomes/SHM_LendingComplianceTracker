@@ -156,6 +156,7 @@ def show():
     shm_team = st.selectbox("SHM team responsible", ['Data','Finance','Investment','Legal','Ops']) 
     shm_individual = st.text_input("SHM individual responsible", placeholder="Please add email address")
     shm_bu = st.text_input("SHM BU lead", placeholder="Please add email address")
+    st.caption("Note: SHM individual responsible and SHM BU lead has to be different.")
     added_by = st.text_input("Added by", placeholder="Please add your email address")
     entry_date = st.date_input("Requirement added on")
 
