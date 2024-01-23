@@ -2,6 +2,7 @@ import streamlit as st
 import pyodbc
 # import re
 import pandas as pd
+from datetime import timedelta
 
 # Function to connect to the Azure SQL database
 def create_connection():
@@ -32,7 +33,6 @@ def create_table(conn):
                 [deadline_period] INT NULL,
                 [deadline_date] DATE NULL,
                 [fst_reminder] DATE NULL,
-                [fnl_reminder] DATE NULL,
                 [recurrence] NVARCHAR(50) NULL,
                 [loc8me_contact] NVARCHAR(100) NULL,
                 [shm_team] NVARCHAR(50) NULL,
@@ -50,9 +50,9 @@ def create_table(conn):
 # Function to insert data into the SHMLendingCompliance table
 def insert_data(conn, data):
     insert_sql = '''INSERT INTO SHMLendingCompliance (Dwelling_ID, Asset_ID, Asset_address, Dwelling_address, lender, condition_title, reference, requirements, 
-                   action_req, trigger_date, deadline_period, deadline_date, fst_reminder, fnl_reminder, recurrence, 
+                   action_req, trigger_date, deadline_period, deadline_date, fst_reminder, recurrence, 
                    loc8me_contact, shm_team, shm_individual, shm_bu, added_by, entry_date)
-                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);'''
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);'''
 
     cur = conn.cursor()
     cur.execute(insert_sql, data)
@@ -135,15 +135,19 @@ def show():
     deadline_period = st.number_input("Deadline (days)", min_value=0, value=0, step=1,
                                     format="%d",
                                     help="If action is required to be completed by X days following the trigger date. Input if applicable.")
-
+    # Calculate the default deadline date
+    default_deadline_date = trigger_date + timedelta(days=deadline_period)
+    default_fst_reminder_date = deadline_date - timedelta(days=14)
     # Date input for Deadline and Reminders
-    deadline_date = st.date_input("Deadline")
-    fst_reminder = st.date_input("First reminder")
-    fnl_reminder = st.date_input("Final reminder")
+    deadline_date = st.date_input("Deadline", value=default_deadline_date)
+    fst_reminder = st.date_input("Reminder starts on", value=default_fst_reminder_date)
+    st.caption("Note: Daily reminders will be sent to individual responsible via email, from the first date of the reminder until the action is complete or the final deadline date.")
+    #fnl_reminder = st.date_input("Final reminder")
 
     # Dropdown for recurring / one-off
     recurrence = st.selectbox("Recurrence (every X days)", ["0", "10","15","20","25","30","60","90"])
     st.caption("For one-off event, select 0 days for recurrence.")
+    st.caption("IMPORTANT: The reminder function for recurrent events still need to be build. For the time being, please notify the Data team when you add a recurrent event.")
     
     # Text input for key contacts
     loc8me_contact = st.text_input("Loc8me contact", placeholder="Please add email address")
@@ -168,7 +172,7 @@ def show():
         "Deadline Period (days)": deadline_period,
         "Deadline": deadline_date,
         "First reminder": fst_reminder,
-        "Final reminder": fnl_reminder,
+        #"Final reminder": fnl_reminder,
         "Loc8me Contact": loc8me_contact,
         "SHM team resopnsible": shm_team,
         "SHM invidual responsible": shm_individual,
@@ -195,7 +199,8 @@ def show():
             dwelling_id, asset_id, selected_asset_address, selected_address, lender, 
             condition_title, reference, requirements, 
             action_req, trigger_date, deadline_period, deadline_date, fst_reminder,
-            fnl_reminder, recurrence, loc8me_contact, shm_team, shm_individual,
+            #fnl_reminder, 
+            recurrence, loc8me_contact, shm_team, shm_individual,
             shm_bu, added_by, entry_date #... other fields as needed
         )
 
