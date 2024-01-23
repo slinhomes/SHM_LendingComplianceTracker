@@ -57,7 +57,7 @@ def show():
         SELECT SHMLendingCompliance.uid, SHMLendingCompliance.condition_title, SHMLendingCompliance.reference, 
                SHMLendingCompliance.requirements, SHMLendingCompliance.action_req, SHMLendingCompliance.fst_reminder, 
                SHMLendingCompliance.deadline_date, TeamDirectory.team, 
-               SHMLendingCompliance.added_by, SHMLendingCompliance.entry_date
+               SHMLendingCompliance.added_by, SHMLendingCompliance.entry_date, SHMLendingCompliance.complete_by
         FROM SHMLendingCompliance 
         LEFT JOIN TeamDirectory ON SHMLendingCompliance.shm_team = TeamDirectory.team_member_emails
         WHERE 1=1
@@ -90,32 +90,32 @@ def show():
         if result_rows:
             result_columns = ["UID", "Condition title", "Reference", "Requirements", 
                               "Action needed", "First reminder", "Deadline", 
-                              "SHM team responsible", "Condition added by", "Condition added on"]
+                              "SHM team responsible", "Condition added by", "Condition added on", "Completed by"]
             
             st.session_state['search_results'] = pd.DataFrame.from_records(result_rows, columns=result_columns).set_index('UID')
 
-            # Display search results and editor
-            if st.session_state['search_results'] is not None:
-                st.markdown("---")
-                st.write("Search Results:")
-                st.dataframe(st.session_state['search_results'])
+    # Display search results and editor
+    if st.session_state['search_results'] is not None:
+        st.markdown("---")
+        st.write("Search Results:")
+        st.dataframe(st.session_state['search_results'])
 
-                st.markdown("---")
-                st.write("Update Requirements:")
+        st.markdown("---")
+        st.write("Update Requirements:")
 
-                uid_to_update = st.selectbox("Select UID to Update", st.session_state['search_results'].index)
-                new_first_reminder = st.date_input("New First Reminder", value=st.session_state['search_results'].loc[uid_to_update,'First reminder'], key="new_first_reminder")
-                new_deadline = st.date_input("New Deadline", value=st.session_state['search_results'].loc[uid_to_update,'Deadline'], key="new_deadline")
-                new_completed_by = st.text_input("Completed By (Initials)", key="new_completed_by")
+        uid_to_update = st.selectbox("Select UID to Update", st.session_state['search_results'].index)
+        new_first_reminder = st.date_input("New First Reminder", value=st.session_state['search_results'].loc[uid_to_update,'First reminder'], key="new_first_reminder")
+        new_deadline = st.date_input("New Deadline", value=st.session_state['search_results'].loc[uid_to_update,'Deadline'], key="new_deadline")
+        new_completed_by = st.text_input("Completed By (Initials)", key="new_completed_by")
 
-                # Update button
-                if st.button('Update Database'):
-                    update_database(conn, uid_to_update, new_first_reminder, new_deadline, new_completed_by)
-                    st.success(f'Updated record for UID: {uid_to_update}')
-                            
-    
+        # Update button
+        if st.button('Update Database'):
+            update_database(conn, uid_to_update, new_first_reminder, new_deadline, new_completed_by)
+            st.success(f'Updated record for UID: {uid_to_update}')
         else:
-            st.write("To update the database, click 'Update Database'.")
+            st.write("Error, try again.")
+                    
+    
 
     
 
