@@ -48,8 +48,8 @@ def main():
 
     # Map the labels to functions
     app_pages = {
-        "Add Requirements": add_requirements.show,
-        "Search for Existing Requirements": search_requirements.show,
+        "Add requirements": add_requirements.show,
+        "Search for existing requirements": search_requirements.show,
     }
 
     # Display selected page
