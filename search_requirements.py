@@ -95,7 +95,7 @@ def show():
             # Define the columns to display
             result_columns = ["UID", "Condition title", "Reference", "Requirements", 
                               "Action needed", "First reminder", "Deadline", 
-                              "SHM team responsible"]
+                              "SHM team responsible", "Condition added by", "Condition added on"]
             
             # Convert the result to a pandas DataFrame
             result_df = pd.DataFrame.from_records(result_rows, columns=result_columns)
@@ -126,12 +126,12 @@ def show():
                                "First reminder": st.column_config.DateColumn(),
                                "Deadline": st.column_config.DateColumn(),
                                "SHM team responsible": st.column_config.TextColumn(),
-                            #    "Condition added by": st.column_config.TextColumn(),
-                            #    "Condition added on": st.column_config.DateColumn(),
+                               "Condition added by": st.column_config.TextColumn(),
+                               "Condition added on": st.column_config.DateColumn(),
                                "Completed by": st.column_config.TextColumn()
                            },
                            disabled=["UID", "Condition title", "Reference", "Requirements", 
-                              "Action needed", "SHM team responsible"])
+                              "Action needed", "SHM team responsible","Condition added by","Condition added on"])
             
             # Update button
             if st.button('Update Database'):
