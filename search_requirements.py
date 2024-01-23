@@ -111,9 +111,9 @@ def show():
         # Update button
         if st.button('Update Database'):
             update_database(conn, uid_to_update, new_first_reminder, new_deadline, new_completed_by)
-            st.success(f'Updated record for UID: {uid_to_update}')
+            st.success(f'Thanks! Record for UID: {uid_to_update} is successfully updated!')
         else:
-            st.write("Error, try again.")
+            st.caption("To update the record, please make sure you click 'Update Database'.")
                     
     
 
