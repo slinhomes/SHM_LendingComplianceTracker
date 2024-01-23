@@ -130,7 +130,7 @@ def show():
                         st.success(f'Updated UID: {uid}')
         
     else:
-        st.write("No results found matching the criteria.")
+        # st.write("No results found matching the criteria.")
 
     
 
