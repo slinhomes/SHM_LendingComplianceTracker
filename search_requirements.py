@@ -116,7 +116,7 @@ def show():
             #         st.success(f"Marked as completed by {initials} for '{uid}'")
             #         break  # Break to update one record at a time
 
-            edited_df = st.data_editor(result_df, hide_index=True, 
+            edited_df = st.data_editor(result_df, hide_index=True, use_container_width=True,
                            column_config = {
                                "UID": st.column_config.TextColumn(),
                                "Condition title": st.column_config.TextColumn(),
