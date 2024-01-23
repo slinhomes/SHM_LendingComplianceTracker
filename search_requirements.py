@@ -16,7 +16,7 @@ def create_connection():
 # Function to update db
 def update_database(conn, uid, fst_reminder, deadline_date, completed_by):
     sql = """UPDATE SHMLendingCompliance 
-             SET fst_reminder = ?, deadline_date = ?, completed_by = ?
+             SET fst_reminder = ?, deadline_date = ?, complete_by = ?
              WHERE UID = ?;"""
     cursor = conn.cursor()
     cursor.execute(sql, (fst_reminder, deadline_date, completed_by, uid))
