@@ -99,8 +99,8 @@ def show():
             st.write("Update Requirements:")
 
             uid_to_update = st.selectbox("Select UID to Update", result_df.index)
-            new_first_reminder = st.date_input("New First Reminder")
-            new_deadline = st.date_input("New Deadline")
+            new_first_reminder = st.date_input("New First Reminder", value=result_df.loc[uid_to_update,'First reminder'])
+            new_deadline = st.date_input("New Deadline", value=result_df.loc[uid_to_update,'Deadline'])
             new_completed_by = st.text_input("Completed By (Initials)")
 
             # Update button
