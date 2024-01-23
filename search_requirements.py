@@ -31,8 +31,8 @@ def update_database(conn, uid, first_reminder, deadline, completed_by):
     conn.commit()
 
 def show():
-    st.write("Welcome to the Search for Existing Compliance Requirements Page")
-    st.caption("Please note that this site is currently under development.")
+    st.write("Please note that this site is currently under development.")
+    # st.caption("Please note that this site is currently under development.")
     st.markdown("---")  # Page breaker
 
     # Connect to the database and fetch property addresses and IDs
