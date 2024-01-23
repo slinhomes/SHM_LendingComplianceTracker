@@ -105,8 +105,8 @@ def show():
         uid_to_update = st.selectbox("Select UID to Update", st.session_state['search_results'].index)
         new_first_reminder = st.date_input("New First Reminder", value=st.session_state['search_results'].loc[uid_to_update,'First reminder'], key="new_first_reminder")
         new_deadline = st.date_input("New Deadline", value=st.session_state['search_results'].loc[uid_to_update,'Deadline'], key="new_deadline")
-        new_completed_by = st.text_input("Completed By (Initials)", key="new_completed_by")
-        new_completed_on = st.date_input("New Completed On", key ="new_completed_on")
+        new_completed_by = st.text_input("Completed By (add your initials)", key="new_completed_by")
+        new_completed_on = st.date_input("Completed On", key ="new_completed_on")
 
         # Update button
         if st.button('Update Database'):
