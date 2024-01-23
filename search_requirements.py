@@ -29,7 +29,7 @@ def show():
 
     # Initialize session state variables
     if 'search_results' not in st.session_state:
-        st.session_state['search_results'] = None
+        st.session_state['search_results'] = pd.DataFrame()
     if 'edited_results' not in st.session_state:
         st.session_state['edited_results'] = None
 
