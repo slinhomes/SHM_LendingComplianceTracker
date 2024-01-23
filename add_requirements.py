@@ -147,7 +147,7 @@ def show():
     
     # Text input for key contacts
     loc8me_contact = st.text_input("Loc8me contact", placeholder="Please add email address")
-    shm_team = st.text_input("SHM team responsible", placeholder="Please add team initial") 
+    shm_team = st.selectbox("SHM team responsible", ['Data','Finance','Investment','Legal','Ops']) 
     shm_individual = st.text_input("SHM individual responsible", placeholder="Please add email address")
     shm_bu = st.text_input("SHM BU lead", placeholder="Please add email address")
     added_by = st.text_input("Added by", placeholder="Please add your email address")

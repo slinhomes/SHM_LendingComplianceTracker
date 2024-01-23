@@ -14,12 +14,12 @@ def create_connection():
     return conn
 
 # Function to update db
-def update_database(conn, uid, fst_reminder, deadline_date, completed_by):
+def update_database(conn, uid, fst_reminder, deadline_date, completed_by, complete_on):
     sql = """UPDATE SHMLendingCompliance 
-             SET fst_reminder = ?, deadline_date = ?, complete_by = ?
+             SET fst_reminder = ?, deadline_date = ?, complete_by = ?, complete_on = ?
              WHERE UID = ?;"""
     cursor = conn.cursor()
-    cursor.execute(sql, (fst_reminder, deadline_date, completed_by, uid))
+    cursor.execute(sql, (fst_reminder, deadline_date, completed_by, complete_on, uid))
     conn.commit()
 
 def show():
@@ -56,10 +56,9 @@ def show():
         query = """
         SELECT SHMLendingCompliance.uid, SHMLendingCompliance.condition_title, SHMLendingCompliance.reference, 
                SHMLendingCompliance.requirements, SHMLendingCompliance.action_req, SHMLendingCompliance.fst_reminder, 
-               SHMLendingCompliance.deadline_date, TeamDirectory.team, 
-               SHMLendingCompliance.added_by, SHMLendingCompliance.entry_date, SHMLendingCompliance.complete_by
-        FROM SHMLendingCompliance 
-        LEFT JOIN TeamDirectory ON SHMLendingCompliance.shm_team = TeamDirectory.team_member_emails
+               SHMLendingCompliance.deadline_date, SHMLendingCompliance.shm_team, 
+               SHMLendingCompliance.added_by, SHMLendingCompliance.entry_date, SHMLendingCompliance.complete_by, SHMLendingCompliance.complete_on
+        FROM SHMLendingCompliance
         WHERE 1=1
         """
         params = []
@@ -90,7 +89,7 @@ def show():
         if result_rows:
             result_columns = ["UID", "Condition title", "Reference", "Requirements", 
                               "Action needed", "First reminder", "Deadline", 
-                              "SHM team responsible", "Condition added by", "Condition added on", "Completed by"]
+                              "SHM team responsible", "Condition added by", "Condition added on", "Completed by", "Completed on"]
             
             st.session_state['search_results'] = pd.DataFrame.from_records(result_rows, columns=result_columns).set_index('UID')
 
@@ -107,10 +106,11 @@ def show():
         new_first_reminder = st.date_input("New First Reminder", value=st.session_state['search_results'].loc[uid_to_update,'First reminder'], key="new_first_reminder")
         new_deadline = st.date_input("New Deadline", value=st.session_state['search_results'].loc[uid_to_update,'Deadline'], key="new_deadline")
         new_completed_by = st.text_input("Completed By (Initials)", key="new_completed_by")
+        new_completed_on = st.date_input("New Completed On", key ="new_completed_on")
 
         # Update button
         if st.button('Update Database'):
-            update_database(conn, uid_to_update, new_first_reminder, new_deadline, new_completed_by)
+            update_database(conn, uid_to_update, new_first_reminder, new_deadline, new_completed_by, new_completed_on)
             st.success(f'Thanks! Record for UID: {uid_to_update} is successfully updated!')
         else:
             st.caption("To update the record, please make sure you click 'Update Database'.")
