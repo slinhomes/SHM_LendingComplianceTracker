@@ -35,6 +35,10 @@ def show():
     # st.caption("Please note that this site is currently under development.")
     st.markdown("---")  # Page breaker
 
+    # Initialize session state variables
+    if 'search_results' not in st.session_state:
+        st.session_state['search_results'] = None
+
     # Connect to the database and fetch property addresses and IDs
     conn = create_connection()
     cursor = conn.cursor()
@@ -96,17 +100,18 @@ def show():
                               "Action needed", "First reminder", "Deadline", 
                               "SHM team responsible", "Condition added by", "Condition added on"]
             
-            result_df = pd.DataFrame.from_records(result_rows, columns=result_columns)
-            result_df = result_df.set_index('UID')
-
+            st.session_state['search_results'] = pd.DataFrame.from_records(result_rows, columns=result_columns).set_index('UID')
+    
+    if st.session_state['search_results'] is not None:
+            
             st.write("Search Results:")
-            st.dataframe(result_df)
+            st.dataframe(st.session_state['search_results'])
 
             st.markdown("---")
             st.write("Update Compliance Requirement")
 
             # User inputs for updating a record
-            uid_to_update = st.selectbox("Select UID to Update", result_df.index)
+            uid_to_update = st.selectbox("Select UID to Update", st.session_state['search_results'].index)
             new_first_reminder = st.date_input("New First Reminder")
             new_deadline = st.date_input("New Deadline")
             new_completed_by = st.text_input("Completed By (Initials)")
@@ -114,8 +119,13 @@ def show():
             if st.button('Update Record'):
                 update_database(conn, uid_to_update, new_first_reminder, new_deadline, new_completed_by)
                 st.success(f'Updated record for UID: {uid_to_update}')
-        else:
-            st.write("No results found matching the criteria.")
+                # Clear the input fields after updating
+                st.session_state['new_first_reminder']=None
+                st.session_state['new_deadline'] = None
+                st.session_state['new_completed_by'] = ''
+        
+    else:
+        st.write("No results found matching the criteria.")
 
     
 
