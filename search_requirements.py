@@ -27,6 +27,10 @@ def show():
     # st.caption("Please note that this site is currently under development.")
     st.markdown("---")  # Page breaker
 
+    # Initialize session state variables
+    if 'search_results' not in st.session_state:
+        st.session_state['search_results'] = None
+
     # Connect to the database and fetch property addresses and IDs
     conn = create_connection()
     cursor = conn.cursor()
@@ -88,26 +92,27 @@ def show():
                               "Action needed", "First reminder", "Deadline", 
                               "SHM team responsible", "Condition added by", "Condition added on"]
             
-            result_df = pd.DataFrame.from_records(result_rows, columns=result_columns).set_index('UID')
+            st.session_state['search_results'] = pd.DataFrame.from_records(result_rows, columns=result_columns).set_index('UID')
 
             # Display search results and editor
-            st.markdown("---")
-            st.write("Search Results:")
-            st.dataframe(result_df)
+            if st.session_state['search_results'] is not None:
+                st.markdown("---")
+                st.write("Search Results:")
+                st.dataframe(st.session_state['search_results'])
 
-            st.markdown("---")
-            st.write("Update Requirements:")
+                st.markdown("---")
+                st.write("Update Requirements:")
 
-            uid_to_update = st.selectbox("Select UID to Update", result_df.index)
-            new_first_reminder = st.date_input("New First Reminder", value=result_df.loc[uid_to_update,'First reminder'])
-            new_deadline = st.date_input("New Deadline", value=result_df.loc[uid_to_update,'Deadline'])
-            new_completed_by = st.text_input("Completed By (Initials)")
+                uid_to_update = st.selectbox("Select UID to Update", st.session_state['search_results'].index)
+                new_first_reminder = st.date_input("New First Reminder", value=st.session_state['search_results'].loc[uid_to_update,'First reminder'], key="new_first_reminder")
+                new_deadline = st.date_input("New Deadline", value=st.session_state['search_results'].loc[uid_to_update,'Deadline'], key="new_deadline")
+                new_completed_by = st.text_input("Completed By (Initials)", key="new_completed_by")
 
-            # Update button
-            if st.button('Update Database'):
-                update_database(conn, uid_to_update, new_first_reminder, new_deadline, new_completed_by)
-                st.success(f'Updated record for UID: {uid_to_update}')
-                        
+                # Update button
+                if st.button('Update Database'):
+                    update_database(conn, uid_to_update, new_first_reminder, new_deadline, new_completed_by)
+                    st.success(f'Updated record for UID: {uid_to_update}')
+                            
     
         else:
             st.write("To update the database, click 'Update Database'.")
