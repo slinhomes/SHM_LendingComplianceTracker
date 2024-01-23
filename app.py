@@ -41,7 +41,7 @@ def main():
     st.sidebar.title("Main Menu")
 
     # Custom labels with HTML for spacing
-    page_labels = ["Add Requirements", "Search for Existing Requirements"]
+    page_labels = ["Add requirements", "Search for existing requirements"]
 
     # Sidebar for page navigation
     selected_label = st.sidebar.radio("Select a page:", page_labels)
@@ -53,7 +53,7 @@ def main():
     }
 
     # Display selected page
-    st.title("SHM Lending Compliance Report")
+    st.title("SHM Refi Bank Requirements Portal")
     app_pages[selected_label]()
 
 if __name__ == "__main__":
