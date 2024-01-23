@@ -186,8 +186,7 @@ def show():
     preview_df = preview_df.set_index('Dwelling ID')
 
     # Display the data as a table for preview
-    st.markdown("<span style='color: red; font-weight: bold;'>IMPORTANT!</span>", unsafe_allow_html=True)
-    st.write("Please check the following details entered before submission.")
+    st.markdown("<span style='color: red; font-weight: bold;'>IMPORTANT! Please check all your data inputs before submission.</span>", unsafe_allow_html=True)
 
     transposed_preview_df = preview_df.T
     #transposed_preview_df = transposed_preview_df.iloc[1:,:]
