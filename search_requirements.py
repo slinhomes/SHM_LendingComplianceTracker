@@ -22,6 +22,14 @@ def update_completion_status(conn, uid, completed_by):
     except Exception as e:
         print(f"An error occurred: {e}")
 
+def update_database(conn, uid, first_reminder, deadline, completed_by):
+    sql = """UPDATE SHMLendingCompliance 
+             SET First_reminder = ?, Deadline = ?, Completed_by = ?
+             WHERE UID = ?;"""
+    cursor = conn.cursor()
+    cursor.execute(sql, (first_reminder, deadline, completed_by, uid))
+    conn.commit()
+
 def show():
     st.write("Welcome to the Search for Existing Compliance Requirements Page")
     st.caption("Please note that this site is currently under development.")
@@ -108,7 +116,7 @@ def show():
             #         st.success(f"Marked as completed by {initials} for '{uid}'")
             #         break  # Break to update one record at a time
 
-            st.data_editor(result_df, hide_index=True, 
+            edited_df = st.data_editor(result_df, hide_index=True, 
                            column_config = {
                                "UID": st.column_config.TextColumn(),
                                "Condition title": st.column_config.TextColumn(),
@@ -118,11 +126,27 @@ def show():
                                "First reminder": st.column_config.DateColumn(),
                                "Deadline": st.column_config.DateColumn(),
                                "SHM team responsible": st.column_config.TextColumn(),
-                               "Condition added by": st.column_config.TextColumn(),
-                               "Condition added on": st.column_config.DateColumn(),
+                            #    "Condition added by": st.column_config.TextColumn(),
+                            #    "Condition added on": st.column_config.DateColumn(),
                                "Completed by": st.column_config.TextColumn()
                            },
-                           disabled=result_columns)
+                           disabled=["UID", "Condition title", "Reference", "Requirements", 
+                              "Action needed", "SHM team responsible"])
+            
+            # Update button
+            if st.button('Update Database'):
+                for uid in edited_df.index:
+                    if not edited_df.loc[uid, :].equals(result_df.loc[uid, :]):
+                        # Fetch the edited data
+                        edited_data = edited_df.loc[uid]
+                        first_reminder = edited_data['First reminder']
+                        deadline = edited_data['Deadline']
+                        completed_by = edited_data['Completed by']
+
+                        # Update database for this UID
+                        update_database(conn, uid, first_reminder, deadline, completed_by)
+                        st.success(f'Updated UID: {uid}')
+
 
         else:
             st.write("No results found matching the criteria.")
