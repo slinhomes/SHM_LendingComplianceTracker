@@ -101,20 +101,20 @@ def show():
     all_addresses = {f'{row[2]} {row[3]}, {row[4]}': (row[0], row[1], row[5]) for row in rows}  # Mapping detailed address to DwellingID and propco
 
     # Dropdown for selecting asset address
-    selected_asset_address = st.selectbox("Asset Address", ["Select all"] + list(asset_address.keys()))
+    selected_asset_address = st.selectbox("Asset Address", ["All relevant"] + list(asset_address.keys()))
 
     dwelling_id = asset_id = propco = ""  # Initialize dwelling_id, asset_id and propco
 
     # Filter detailed addresses based on selected asset
-    if selected_asset_address != "Select all":
+    if selected_asset_address != "All relevant":
         selected_asset_id = asset_address[selected_asset_address]
         addresses = {addr: details for addr, details in all_addresses.items() if details[1] == selected_asset_id}
 
     # Dropdown for selecting detailed property address
-    selected_address = st.selectbox("Detailed Address", ["Select all"] + list(addresses.keys()))
+    selected_address = st.selectbox("Detailed Address", ["All relevant"] + list(addresses.keys()))
 
     # Check if a detailed address is selected
-    if selected_address != "Select all":
+    if selected_address != "All relevant":
         # Display Dwelling ID and full address if a detailed address is selected
         dwelling_id, asset_id, propco = addresses[selected_address]
         st.write(f"Dwelling ID: {dwelling_id}")
