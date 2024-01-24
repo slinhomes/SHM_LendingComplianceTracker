@@ -100,23 +100,21 @@ def show():
     asset_address = {f'{row[3]}, {row[4]}': row[1] for row in rows} # Mapping asset address to AssetID
     all_addresses = {f'{row[2]} {row[3]}, {row[4]}': (row[0], row[1], row[5]) for row in rows}  # Mapping detailed address to DwellingID and propco
 
-    st.caption("Select property address or detailed asset below.")
-
     # Dropdown for selecting asset address
-    selected_asset_address = st.selectbox("Asset Address", ["Select property address"] + list(asset_address.keys()))
+    selected_asset_address = st.selectbox("Asset Address", ["Select all"] + list(asset_address.keys()))
 
     dwelling_id = asset_id = propco = ""  # Initialize dwelling_id, asset_id and propco
 
     # Filter detailed addresses based on selected asset
-    if selected_asset_address != "Select property address":
+    if selected_asset_address != "Select all":
         selected_asset_id = asset_address[selected_asset_address]
         addresses = {addr: details for addr, details in all_addresses.items() if details[1] == selected_asset_id}
 
     # Dropdown for selecting detailed property address
-    selected_address = st.selectbox("Detailed Address", ["Select address at detailed dwelling level"] + list(addresses.keys()))
+    selected_address = st.selectbox("Detailed Address", ["Select all"] + list(addresses.keys()))
 
     # Check if a detailed address is selected
-    if selected_address != "Select address at detailed dwelling level":
+    if selected_address != "Select all":
         # Display Dwelling ID and full address if a detailed address is selected
         dwelling_id, asset_id, propco = addresses[selected_address]
         st.write(f"Dwelling ID: {dwelling_id}")
@@ -125,13 +123,11 @@ def show():
     else:
         dwelling_id = 'N/A'
 
-    # Dropdown for selecting a Lender and Requirements
-    lender = st.selectbox("Lender", ["Santander", "Aburthnott"])
     # Dropdown for selecting a requirements or condition
     condition_title = st.selectbox("Requirements / Condition",
                                    ['HMO Licence','Asbestos Survey','Refurb Compliance',
                                     'Refurb Inspectors (incl. Building Certificates and HMO variations)',
-                                    'Arrange valuer / lender inspection and building surveys',
+                                    'Arrange valuer / lender inspection and building surveys', 'FRA'
                                     'Other conditions'])
 
     # Text input for Reference in facility agreement
@@ -186,7 +182,7 @@ def show():
         "Asset ID": asset_id,
         "Property": selected_asset_address,
         "Detailed Address (if applicable)": selected_address,
-        "Lender": lender,
+        "Lender": selected_lender,
         "Condition Title": condition_title,
         "Reference": reference,
         "Requirements": requirements,
