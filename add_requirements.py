@@ -214,7 +214,7 @@ def show():
     if submit_button:
         # Prepare the data tuple for database insertion
         data_tuple = (
-            dwelling_id, asset_id, selected_asset_address, selected_address, lender, 
+            dwelling_id, asset_id, selected_asset_address, selected_address, selected_lender, 
             condition_title, reference, requirements, 
             action_req, trigger_date, deadline_period, deadline_date, fst_reminder,
             #fnl_reminder, 
