@@ -74,10 +74,31 @@ def show():
     # Connect to the database and fetch property addresses and IDs
     conn = create_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT Dwelling_ID, Asset_ID, flat_number, property_address, city, propco FROM SHMDwellingInfo")
+
+    # Fetch distinct lender
+    cursor.execute("SELECT DISTINCT lender FROM SHMLender")
+    lenders = [row[0] for row in cursor.fetchall()]
+    selected_lender = st.selectbox("Lender", ["Select a lender"] + lenders)
+
+    asset_address = {}
+    addresses = {}
+
+    # Fetch property addresses related to the selected lender
+    if selected_lender and selected_lender != "Select a lender":
+        query = """
+                SELECT DI.Dwelling_ID, DI.Asset_ID, DI.flat_number, DI.property_address, DI.city, DI.propco
+                FROM SHMDwellingInfo DI
+                JOIN SHMLender L ON DI.Dwelling_ID = L.Dwelling_ID
+                WHERE L.lender = ?
+                """
+        cursor.execute(query, (selected_lender,))
+    else:
+        # Fetch all properties if no lender is selected
+        cursor.execute("SELECT Dwelling_ID, Asset_ID, flat_number, property_address, city, propco FROM SHMDwellingInfo")
+
     rows = cursor.fetchall()
-    asset_address =  {f'{row[3]}, {row[4]}': (row[1], row[5]) for row in rows}  # Mapping asset address to AssetID and propco
-    addresses = {f'{row[2]} {row[3]}, {row[4]}': (row[0], row[1], row[5]) for row in rows}  # Mapping detailed address to DwellingID and propco
+    asset_address = {f'{row[3]}, {row[4]}': row[1] for row in rows} # Mapping asset address to AssetID
+    all_addresses = {f'{row[2]} {row[3]}, {row[4]}': (row[0], row[1], row[5]) for row in rows}  # Mapping detailed address to DwellingID and propco
 
     st.caption("Select property address or detailed asset below.")
 
@@ -86,11 +107,10 @@ def show():
 
     dwelling_id = asset_id = propco = ""  # Initialize dwelling_id, asset_id and propco
 
+    # Filter detailed addresses based on selected asset
     if selected_asset_address != "Select property address":
-        # Display Asset ID and asset address if an asset address is selected
-        asset_id, propco = asset_address[selected_asset_address]
-        st.write(f"Asset ID: {asset_id}")
-        st.write(f"Propco: {propco}")
+        selected_asset_id = asset_address[selected_asset_address]
+        addresses = {addr: details for addr, details in all_addresses.items() if details[1] == selected_asset_id}
 
     # Dropdown for selecting detailed property address
     selected_address = st.selectbox("Detailed Address", ["Select address at detailed dwelling level"] + list(addresses.keys()))
