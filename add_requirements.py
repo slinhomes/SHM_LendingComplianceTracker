@@ -101,7 +101,7 @@ def show():
     all_addresses = {f'{row[2]} {row[3]}, {row[4]}': (row[0], row[1], row[5]) for row in rows}  # Mapping detailed address to DwellingID and propco
 
     # Dropdown for selecting asset address
-    selected_asset_address = st.selectbox("Asset Address", ["All relevant"] + list(asset_address.keys()))
+    selected_asset_address = st.selectbox("Asset address", ["All relevant"] + list(asset_address.keys()))
 
     dwelling_id = asset_id = propco = ""  # Initialize dwelling_id, asset_id and propco
 
@@ -111,7 +111,7 @@ def show():
         addresses = {addr: details for addr, details in all_addresses.items() if details[1] == selected_asset_id}
 
     # Dropdown for selecting detailed property address
-    selected_address = st.selectbox("Detailed Address", ["All relevant"] + list(addresses.keys()))
+    selected_address = st.selectbox("Detailed address", ["All relevant"] + list(addresses.keys()))
 
     # Check if a detailed address is selected
     if selected_address != "All relevant":
@@ -127,7 +127,7 @@ def show():
     condition_title = st.selectbox("Requirements / Condition",
                                    ['HMO Licence','Asbestos Survey','Refurb Compliance',
                                     'Refurb Inspectors (incl. Building Certificates and HMO variations)',
-                                    'Arrange valuer / lender inspection and building surveys', 'FRA'
+                                    'Arrange valuer / lender inspection and building surveys', 'FRA',
                                     'Other conditions'])
 
     # Text input for Reference in facility agreement
