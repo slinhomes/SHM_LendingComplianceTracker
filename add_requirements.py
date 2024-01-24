@@ -124,7 +124,7 @@ def show():
         dwelling_id = 'N/A'
 
     # Dropdown for selecting a requirements or condition
-    condition_title = st.selectbox("Requirements / Condition",
+    condition_title = st.selectbox("Condition title",
                                    ['HMO Licence','Asbestos Survey','Refurb Compliance',
                                     'Refurb Inspectors (incl. Building Certificates and HMO variations)',
                                     'Arrange valuer / lender inspection and building surveys', 'FRA',
