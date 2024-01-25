@@ -218,9 +218,9 @@ def show():
     # Display the data as a table for preview
     st.markdown("<span style='color: red; font-weight: bold;'>IMPORTANT! Please check all your data inputs before submission.</span>", unsafe_allow_html=True)
 
-    transposed_preview_df = preview_df.T
+    #transposed_preview_df = preview_df.T
     #transposed_preview_df = transposed_preview_df.iloc[1:,:]
-    st.table(transposed_preview_df)
+    st.table(preview_df)
 
     submit_button = st.button("Submit")
   
