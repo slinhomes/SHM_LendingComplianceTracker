@@ -101,25 +101,38 @@ def show():
     all_addresses = {f'{row[2]} {row[3]}, {row[4]}': (row[0], row[1], row[5]) for row in rows}  # Mapping detailed address to DwellingID and propco
 
     # Dropdown for selecting asset address
-    selected_asset_address = st.multiselect("Asset address", ["All relevant"] + list(asset_address.keys()))
+    selected_asset_addresses = st.multiselect("Asset address", ["All relevant properties"] + list(asset_address.keys()))
 
-    dwelling_id = asset_id = propco = ""  # Initialize dwelling_id, asset_id and propco
+    # Initialize dwelling_id, asset_id and propco
+    dwelling_ids = []
+    asset_ids = []
+    propcos = []  
 
     # Filter detailed addresses based on selected asset
-    if selected_asset_address != "All relevant":
-        selected_asset_id = asset_address[selected_asset_address]
+    if "All relevant properties" not in selected_asset_addresses:
+        for selected_asset_address in selected_asset_addresses:
+            selected_asset_id = asset_address[selected_asset_address]
+            for addr, details in all_addresses.items():
+                if details[1] == selected_asset_id:
+                    dwelling_ids.append(details[0])
+                    asset_ids.append(details[1])
+                    propcos.append(details[2])
         addresses = {addr: details for addr, details in all_addresses.items() if details[1] == selected_asset_id}
 
     # Dropdown for selecting detailed property address
-    selected_address = st.multiselect("Detailed address", ["All relevant"] + list(addresses.keys()))
+    selected_addresses = st.multiselect("Detailed address", ["All relevant address at detailed dwelling level"] + list(addresses.keys()))
 
     # Check if a detailed address is selected
-    if selected_address != "All relevant":
-        # Display Dwelling ID and full address if a detailed address is selected
-        dwelling_id, asset_id, propco = addresses[selected_address]
-        st.write(f"Dwelling ID: {dwelling_id}")
-        st.write(f"Asset ID: {asset_id}")
-        st.write(f"Propco: {propco}")
+    if "All relevant address at detailed dwelling level" not in selected_addresses:
+        for selected_address in selected_addresses:
+            dwelling_id, asset_id, propco = addresses[selected_address]
+            dwelling_ids.append(dwelling_id)
+            asset_ids.append(asset_id)
+            propcos.append(propco)
+            # Display Dwelling ID and full address if a detailed address is selected
+            st.write(f"Dwelling ID: {dwelling_ids}")
+            st.write(f"Asset ID: {asset_ids}")
+            st.write(f"Propco: {propcos}")
     else:
         dwelling_id = 'N/A'
 
@@ -178,10 +191,10 @@ def show():
 
     # Collect data into a DataFrame for preview
     data = {
-        "Dwelling ID": dwelling_id,
-        "Asset ID": asset_id,
-        "Property": selected_asset_address,
-        "Detailed Address (if applicable)": selected_address,
+        "Dwelling ID": dwelling_ids,
+        "Asset ID": asset_ids,
+        "Property": selected_asset_addresses,
+        "Detailed Address (if applicable)": selected_addresses,
         "Lender": selected_lender,
         "Condition Title": condition_title,
         "Reference": reference,
@@ -214,7 +227,7 @@ def show():
     if submit_button:
         # Prepare the data tuple for database insertion
         data_tuple = (
-            dwelling_id, asset_id, selected_asset_address, selected_address, selected_lender, 
+            dwelling_ids, asset_ids, selected_asset_addresses, selected_addresses, selected_lender, 
             condition_title, reference, requirements, 
             action_req, trigger_date, deadline_period, deadline_date, fst_reminder,
             #fnl_reminder, 
