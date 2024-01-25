@@ -191,10 +191,10 @@ def show():
 
     # Collect data into a DataFrame for preview
     data = {
-        "Dwelling ID": dwelling_ids,
-        "Asset ID": asset_ids,
-        "Property": selected_asset_addresses,
-        "Detailed Address (if applicable)": selected_addresses,
+        "Dwelling ID": ', '.join(dwelling_ids),
+        "Asset ID": ', '.join(asset_ids),
+        "Property": ', '.join(selected_asset_addresses),
+        "Detailed Address (if applicable)": ', '.join(selected_addresses),
         "Lender": selected_lender,
         "Condition Title": condition_title,
         "Reference": reference,
@@ -213,14 +213,14 @@ def show():
         "Entry date": entry_date
     }
     preview_df = pd.DataFrame([data])
-    preview_df = preview_df.set_index('Dwelling ID')
+    # preview_df = preview_df.set_index('Dwelling ID')
 
     # Display the data as a table for preview
     st.markdown("<span style='color: red; font-weight: bold;'>IMPORTANT! Please check all your data inputs before submission.</span>", unsafe_allow_html=True)
 
-    #transposed_preview_df = preview_df.T
+    transposed_preview_df = preview_df.T
     #transposed_preview_df = transposed_preview_df.iloc[1:,:]
-    st.table(preview_df)
+    st.table(transposed_preview_df)
 
     submit_button = st.button("Submit")
   
