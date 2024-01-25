@@ -104,9 +104,9 @@ def show():
     selected_asset_addresses = st.multiselect("Asset address", ["All relevant properties"] + list(asset_address.keys()))
 
     # Initialize dwelling_id, asset_id and propco
-    dwelling_ids = []
-    asset_ids = []
-    propcos = []  
+    dwelling_ids = set()
+    asset_ids = set()
+    propcos = set() 
 
     # Filter detailed addresses based on selected asset
     if "All relevant properties" not in selected_asset_addresses:
@@ -114,9 +114,9 @@ def show():
             selected_asset_id = asset_address[selected_asset_address]
             for addr, details in all_addresses.items():
                 if details[1] == selected_asset_id:
-                    dwelling_ids.append(details[0])
-                    asset_ids.append(details[1])
-                    propcos.append(details[2])
+                    dwelling_ids.add(details[0])
+                    asset_ids.add(details[1])
+                    propcos.add(details[2])
         addresses = {addr: details for addr, details in all_addresses.items() if details[1] in asset_ids}
 
     # Dropdown for selecting detailed property address
@@ -126,15 +126,20 @@ def show():
     if "All relevant address at detailed dwelling level" not in selected_addresses:
         for selected_address in selected_addresses:
             dwelling_id, asset_id, propco = addresses[selected_address]
-            dwelling_ids.append(dwelling_id)
-            asset_ids.append(asset_id)
-            propcos.append(propco)
+            dwelling_ids.add(dwelling_id)
+            asset_ids.add(asset_id)
+            propcos.add(propco)
             # Display Dwelling ID and full address if a detailed address is selected
             # st.write(f"Dwelling ID: {dwelling_ids}")
             # st.write(f"Asset ID: {asset_ids}")
             # st.write(f"Propco: {propcos}")
     else:
         dwelling_id = 'N/A'
+    
+    # Convert sets back to lists
+    dwelling_ids = list(dwelling_ids)
+    asset_ids = list(asset_ids)
+    propcos = list(propcos)
 
     # Dropdown for selecting a requirements or condition
     condition_title = st.selectbox("Condition title",
