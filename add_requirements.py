@@ -213,7 +213,7 @@ def show():
         "Entry date": entry_date
     }
     preview_df = pd.DataFrame([data])
-    # preview_df = preview_df.set_index('Dwelling ID')
+    preview_df = preview_df.set_index('Lender')
 
     # Display the data as a table for preview
     st.markdown("<span style='color: red; font-weight: bold;'>IMPORTANT! Please check all your data inputs before submission.</span>", unsafe_allow_html=True)
