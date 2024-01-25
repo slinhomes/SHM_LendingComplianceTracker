@@ -117,7 +117,7 @@ def show():
                     dwelling_ids.append(details[0])
                     asset_ids.append(details[1])
                     propcos.append(details[2])
-        addresses = {addr: details for addr, details in all_addresses.items() if details[1] == selected_asset_id}
+        addresses = {addr: details for addr, details in all_addresses.items() if details[1] in asset_ids}
 
     # Dropdown for selecting detailed property address
     selected_addresses = st.multiselect("Detailed address", ["All relevant address at detailed dwelling level"] + list(addresses.keys()))
