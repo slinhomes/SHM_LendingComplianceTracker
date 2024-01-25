@@ -130,9 +130,9 @@ def show():
             asset_ids.append(asset_id)
             propcos.append(propco)
             # Display Dwelling ID and full address if a detailed address is selected
-            st.write(f"Dwelling ID: {dwelling_ids}")
-            st.write(f"Asset ID: {asset_ids}")
-            st.write(f"Propco: {propcos}")
+            # st.write(f"Dwelling ID: {dwelling_ids}")
+            # st.write(f"Asset ID: {asset_ids}")
+            # st.write(f"Propco: {propcos}")
     else:
         dwelling_id = 'N/A'
 
