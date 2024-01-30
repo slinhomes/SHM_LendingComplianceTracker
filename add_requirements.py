@@ -56,8 +56,6 @@ def insert_data(conn, data):
                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);'''
 
     cur = conn.cursor()
-    cur.fast_executemany = False
-
     cur.execute(insert_sql, data)
     conn.commit()
 
