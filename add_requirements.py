@@ -56,6 +56,7 @@ def insert_data(conn, data):
                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);'''
 
     cur = conn.cursor()
+    cursor.fast_executemany = False
     # # Unpack each element for a single row insertion
     # single_row_data = (
     #     data['Dwelling ID'][i], data['Asset ID'][i], data['Property'][i], data['Detailed Address (if applicable)'][i], data['Lender'],
@@ -240,7 +241,7 @@ def show():
     data['First reminder'] = data['First reminder'].strftime('%Y-%m-%d') if isinstance(data['First reminder'], pd.Timestamp) else data['First reminder']
     
     preview_df = pd.DataFrame([data]).astype(str)
-    
+
     # Display the data as a table for preview
     st.markdown("<span style='color: red; font-weight: bold;'>IMPORTANT! Please check all your data inputs before submission.</span>", unsafe_allow_html=True)
 
