@@ -216,10 +216,13 @@ def show():
         "Reference": reference,
         "Requirements": requirements,
         "Action Required": action_req,
-        "Trigger Date": trigger_date,
+        # "Trigger Date": trigger_date,
+        "Trigger Date": trigger_date.strftime('%Y-%m-%d') if trigger_date else '',
         "Deadline Period (days)": deadline_period,
-        "Deadline": deadline_date,
-        "First reminder": fst_reminder,
+        # "Deadline": deadline_date,
+        "Deadline": deadline_date.strftime('%Y-%m-%d') if deadline_date else '',
+        # "First reminder": fst_reminder,
+        "First reminder": fst_reminder.strftime('%Y-%m-%d') if fst_reminder else '',
         #"Final reminder": fnl_reminder,
         "Loc8me Contact": loc8me_contact,
         "SHM team resopnsible": shm_team,
@@ -230,6 +233,11 @@ def show():
     }
     preview_df = pd.DataFrame([data])
     # preview_df = preview_df.set_index('Lender')
+
+    # If you prefer to keep dates as datetime objects for any reason:
+    preview_df['Trigger Date'] = pd.to_datetime(preview_df['Trigger Date'])
+    preview_df['Deadline'] = pd.to_datetime(preview_df['Deadline'])
+    preview_df['First reminder'] = pd.to_datetime(preview_df['First reminder'])
 
     # Display the data as a table for preview
     st.markdown("<span style='color: red; font-weight: bold;'>IMPORTANT! Please check all your data inputs before submission.</span>", unsafe_allow_html=True)
