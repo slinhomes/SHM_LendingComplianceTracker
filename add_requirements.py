@@ -257,6 +257,7 @@ def show():
         "Deadline": deadline_date.strftime('%Y-%m-%d') if deadline_date else '',
         # "First reminder": fst_reminder,
         "First reminder": fst_reminder.strftime('%Y-%m-%d') if fst_reminder else '',
+        "Recurrence": recurrence,
         #"Final reminder": fnl_reminder,
         "Loc8me Contact": loc8me_contact,
         "SHM team resopnsible": shm_team,
@@ -273,7 +274,7 @@ def show():
     data['Deadline'] = data['Deadline'].strftime('%Y-%m-%d') if isinstance(data['Deadline'], pd.Timestamp) else data['Deadline']
     data['First reminder'] = data['First reminder'].strftime('%Y-%m-%d') if isinstance(data['First reminder'], pd.Timestamp) else data['First reminder']
     
-    # preview_df = pd.DataFrame([data]).astype(str)
+    preview_df = pd.DataFrame([data]).astype(str)
 
     # Display the data as a table for preview
     st.markdown("<span style='color: red; font-weight: bold;'>IMPORTANT! Please check all your data inputs before submission.</span>", unsafe_allow_html=True)
