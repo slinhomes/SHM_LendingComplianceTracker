@@ -48,60 +48,18 @@ def create_table(conn):
         print(e)
 
 # Function to insert data into the SHMLendingCompliance table
-# def insert_data(conn, data):
-#     insert_sql = '''INSERT INTO SHMLendingCompliance (Dwelling_ID, Asset_ID, Asset_address, 
-#                    Dwelling_address, lender, condition_title, reference, requirements, 
-#                    action_req, trigger_date, deadline_period, deadline_date, fst_reminder, recurrence, 
-#                    loc8me_contact, shm_team, shm_individual, shm_bu, added_by, entry_date)
-#                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);'''
-
-#     cur = conn.cursor()
-#     cur.fast_executemany = False
-
-#     cur.execute(insert_sql, data)
-#     conn.commit()
-        
 def insert_data(conn, data):
+    insert_sql = '''INSERT INTO SHMLendingCompliance (Dwelling_ID, Asset_ID, Asset_address, 
+                   Dwelling_address, lender, condition_title, reference, requirements, 
+                   action_req, trigger_date, deadline_period, deadline_date, fst_reminder, recurrence, 
+                   loc8me_contact, shm_team, shm_individual, shm_bu, added_by, entry_date)
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);'''
+
     cur = conn.cursor()
-    
-    # Assuming `data` is a dictionary where some values are lists
-    # and you want to insert multiple rows into the database, one for each item in those lists
-    for i in range(len(data['Dwelling ID'])):
-        # Extract the values for each column, ensuring that each is accessed correctly
-        # This assumes all lists in `data` are of the same length
-        dwelling_id = data['Dwelling ID'][i]
-        asset_id = data['Asset ID'][i]
-        asset_address = ', '.join(data['Property'])  # Assuming this should be a concatenated string of all selections
-        dwelling_address = ', '.join(data['Detailed Address (if applicable)'])  # Same assumption as above
-        lender = data['Lender']
-        condition_title = data['Condition Title']
-        reference = data['Reference']
-        requirements = data['Requirements']
-        action_req = data['Action Required']
-        trigger_date = data['Trigger Date']
-        deadline_period = data['Deadline Period (days)']
-        deadline_date = data['Deadline']
-        fst_reminder = data['First reminder']
-        recurrence = data['Recurrence']
-        loc8me_contact = data['Loc8me Contact']
-        shm_team = data['SHM team resopnsible']
-        shm_individual = data['SHM invidual responsible']
-        shm_bu = data['SHM BU lead']
-        added_by = data['Data entered by']
-        entry_date = data['Entry date']
+    cur.fast_executemany = False
 
-        # Prepare the SQL insert statement
-        insert_sql = '''INSERT INTO SHMLendingCompliance (Dwelling_ID, Asset_ID, Asset_address, Dwelling_address, lender, condition_title, reference, requirements, 
-                        action_req, trigger_date, deadline_period, deadline_date, fst_reminder, recurrence, 
-                        loc8me_contact, shm_team, shm_individual, shm_bu, added_by, entry_date)
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);'''
-
-        # Execute the insert statement for each row
-        cur.execute(insert_sql, (dwelling_id, asset_id, asset_address, dwelling_address, lender, condition_title, reference, requirements, 
-                                 action_req, trigger_date, deadline_period, deadline_date, fst_reminder, recurrence, 
-                                 loc8me_contact, shm_team, shm_individual, shm_bu, added_by, entry_date))
+    cur.execute(insert_sql, data)
     conn.commit()
-
 
 # Function to validate email
 # def is_valid_email(email):
@@ -250,13 +208,10 @@ def show():
         "Reference": reference,
         "Requirements": requirements,
         "Action Required": action_req,
-        # "Trigger Date": trigger_date,
-        "Trigger Date": trigger_date.strftime('%Y-%m-%d') if trigger_date else '',
+        "Trigger Date": trigger_date,
         "Deadline Period (days)": deadline_period,
-        # "Deadline": deadline_date,
-        "Deadline": deadline_date.strftime('%Y-%m-%d') if deadline_date else '',
-        # "First reminder": fst_reminder,
-        "First reminder": fst_reminder.strftime('%Y-%m-%d') if fst_reminder else '',
+        "Deadline": deadline_date,
+        "First reminder": fst_reminder,
         "Recurrence": recurrence,
         #"Final reminder": fnl_reminder,
         "Loc8me Contact": loc8me_contact,
@@ -267,14 +222,7 @@ def show():
         "Entry date": entry_date
     }
     preview_df = pd.DataFrame([data])
-    # preview_df = preview_df.set_index('Lender')
-
-    # Convert datetime columns to string right before creating the DataFrame for display
-    data['Trigger Date'] = data['Trigger Date'].strftime('%Y-%m-%d') if isinstance(data['Trigger Date'], pd.Timestamp) else data['Trigger Date']
-    data['Deadline'] = data['Deadline'].strftime('%Y-%m-%d') if isinstance(data['Deadline'], pd.Timestamp) else data['Deadline']
-    data['First reminder'] = data['First reminder'].strftime('%Y-%m-%d') if isinstance(data['First reminder'], pd.Timestamp) else data['First reminder']
-    
-    preview_df = pd.DataFrame([data]).astype(str)
+    preview_df = preview_df.set_index('Lender')
 
     # Display the data as a table for preview
     st.markdown("<span style='color: red; font-weight: bold;'>IMPORTANT! Please check all your data inputs before submission.</span>", unsafe_allow_html=True)
