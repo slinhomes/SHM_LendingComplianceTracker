@@ -140,9 +140,12 @@ def show():
         dwelling_id = 'N/A'
     
     # Convert sets back to lists
-    dwelling_ids = list(dwelling_ids)
-    asset_ids = list(asset_ids)
-    propcos = list(propcos)
+    # dwelling_ids = list(dwelling_ids)
+    # asset_ids = list(asset_ids)
+    # propcos = list(propcos)
+    dwelling_ids = str(dwelling_ids)
+    asset_ids = str(asset_ids)
+    propcos = str(propcos)
 
     # Dropdown for selecting a requirements or condition
     condition_title = st.selectbox("Condition title",
@@ -199,11 +202,11 @@ def show():
 
     # Collect data into a DataFrame for preview
     data = {
-        "Dwelling ID": ', '.join(str(id) for id in dwelling_ids),
-        "Asset ID": ', '.join(str(id) for id in asset_ids),
+        "Dwelling ID": dwelling_ids,
+        "Asset ID": asset_ids,
         "Property": ', '.join(selected_asset_addresses),
         "Detailed Address (if applicable)": ', '.join(selected_addresses),
-        "Lender": str(selected_lender),
+        "Lender": selected_lender,
         "Condition Title": condition_title,
         "Reference": reference,
         "Requirements": requirements,
