@@ -106,10 +106,12 @@ def show():
     # Dropdown for selecting asset address
     selected_asset_addresses = st.multiselect("Asset address", ["All relevant properties"] + list(asset_address.keys()))
 
-    # Initialize dwelling_id, asset_id and propco
-    dwelling_ids = set()
+    # Initialize asset_id and propco sets
     asset_ids = set()
-    propcos = set() 
+    propcos = set()
+
+    # Initialize a dictionary to map asset IDs to their corresponding dwelling IDs and propcos
+    addresses = {}
 
     # Filter detailed addresses based on selected asset
     if "All relevant properties" not in selected_asset_addresses:
@@ -117,28 +119,35 @@ def show():
             selected_asset_id = asset_address[selected_asset_address]
             for addr, details in all_addresses.items():
                 if details[1] == selected_asset_id:
-                    dwelling_ids.add(details[0])
+                    if addr not in addresses:
+                        addresses[addr] = details
                     asset_ids.add(details[1])
                     propcos.add(details[2])
-        addresses = {addr: details for addr, details in all_addresses.items() if details[1] in asset_ids}
 
     # Dropdown for selecting detailed property address
     selected_addresses = st.multiselect("Detailed address", ["All relevant address at detailed dwelling level"] + list(addresses.keys()))
 
+    # Initialize dwelling_ids set to collect IDs based on detailed address selection
+    dwelling_ids = set()
+
     # Check if a detailed address is selected
     if "All relevant address at detailed dwelling level" not in selected_addresses:
         for selected_address in selected_addresses:
-            dwelling_id, asset_id, propco = addresses[selected_address]
-            dwelling_ids.add(dwelling_id)
-            asset_ids.add(asset_id)
-            propcos.add(propco)
-            # Display Dwelling ID and full address if a detailed address is selected
-            # st.write(f"Dwelling ID: {dwelling_ids}")
-            # st.write(f"Asset ID: {asset_ids}")
-            # st.write(f"Propco: {propcos}")
+            if selected_address in addresses:
+                details = addresses[selected_address]
+                dwelling_id, asset_id, propco = details
+                dwelling_ids.add(dwelling_id)  # Now only adds relevant dwelling IDs
+                asset_ids.add(asset_id)
+                propcos.add(propco)
     else:
-        dwelling_id = 'N/A'
-    
+        # If no specific detailed address is selected, use all dwelling IDs related to the selected asset addresses
+        dwelling_ids = {details[0] for addr, details in addresses.items() if details[1] in asset_ids}
+
+    # Convert sets back to lists or strings as needed
+    dwelling_ids = ', '.join(str(id) for id in dwelling_ids)
+    asset_ids = ', '.join(str(id) for id in asset_ids)
+    propcos = ', '.join(propcos)  # Assuming propcos are strings and need to be concatenated
+ 
     # Convert sets back to lists
     # dwelling_ids = list(dwelling_ids)
     # asset_ids = list(asset_ids)
