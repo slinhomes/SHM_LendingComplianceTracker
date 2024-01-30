@@ -55,6 +55,16 @@ def insert_data(conn, data):
                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);'''
 
     cur = conn.cursor()
+    # Unpack each element for a single row insertion
+    single_row_data = (
+        data['Dwelling ID'][i], data['Asset ID'][i], data['Property'][i], data['Detailed Address (if applicable)'][i], data['Lender'],
+        data['Condition Title'], data['Reference'], data['Requirements'],
+        data['Action Required'], data['Trigger Date'], data['Deadline Period (days)'], data['Deadline'],
+        data['First reminder'], data['Recurrence'], data['Loc8me Contact'],
+        data['SHM team resopnsible'], data['SHM invidual responsible'], data['SHM BU lead'],
+        data['Data entered by'], data['Entry date']
+    )
+    
     cur.execute(insert_sql, data)
     conn.commit()
 
