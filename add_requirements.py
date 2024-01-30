@@ -234,10 +234,10 @@ def show():
     preview_df = pd.DataFrame([data])
     # preview_df = preview_df.set_index('Lender')
 
-    # If you prefer to keep dates as datetime objects for any reason:
-    preview_df['Trigger Date'] = pd.to_datetime(preview_df['Trigger Date'])
-    preview_df['Deadline'] = pd.to_datetime(preview_df['Deadline'])
-    preview_df['First reminder'] = pd.to_datetime(preview_df['First reminder'])
+    # Convert datetime columns to string right before creating the DataFrame for display
+    data['Trigger Date'] = data['Trigger Date'].strftime('%Y-%m-%d') if isinstance(data['Trigger Date'], pd.Timestamp) else data['Trigger Date']
+    data['Deadline'] = data['Deadline'].strftime('%Y-%m-%d') if isinstance(data['Deadline'], pd.Timestamp) else data['Deadline']
+    data['First reminder'] = data['First reminder'].strftime('%Y-%m-%d') if isinstance(data['First reminder'], pd.Timestamp) else data['First reminder']
 
     # Display the data as a table for preview
     st.markdown("<span style='color: red; font-weight: bold;'>IMPORTANT! Please check all your data inputs before submission.</span>", unsafe_allow_html=True)
