@@ -49,7 +49,8 @@ def create_table(conn):
 
 # Function to insert data into the SHMLendingCompliance table
 def insert_data(conn, data):
-    insert_sql = '''INSERT INTO SHMLendingCompliance (Dwelling_ID, Asset_ID, Asset_address, Dwelling_address, lender, condition_title, reference, requirements, 
+    insert_sql = '''INSERT INTO SHMLendingCompliance (Dwelling_ID, Asset_ID, Asset_address, 
+                   Dwelling_address, lender, condition_title, reference, requirements, 
                    action_req, trigger_date, deadline_period, deadline_date, fst_reminder, recurrence, 
                    loc8me_contact, shm_team, shm_individual, shm_bu, added_by, entry_date)
                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);'''
@@ -228,7 +229,7 @@ def show():
         "Entry date": entry_date
     }
     preview_df = pd.DataFrame([data])
-    preview_df = preview_df.set_index('Lender')
+    # preview_df = preview_df.set_index('Lender')
 
     # Display the data as a table for preview
     st.markdown("<span style='color: red; font-weight: bold;'>IMPORTANT! Please check all your data inputs before submission.</span>", unsafe_allow_html=True)
