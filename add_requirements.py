@@ -208,8 +208,8 @@ def show():
 
     # Collect data into a DataFrame for preview
     data = {
-        "Dwelling ID": ', '.join(dwelling_ids),
-        "Asset ID": ', '.join(asset_ids),
+        "Dwelling ID": ', '.join(str(id) for id in dwelling_ids),
+        "Asset ID": ', '.join(str(id) for id in asset_ids),
         "Property": ', '.join(selected_asset_addresses),
         "Detailed Address (if applicable)": ', '.join(selected_addresses),
         "Lender": str(selected_lender),
