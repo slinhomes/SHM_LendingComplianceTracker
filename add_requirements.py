@@ -48,18 +48,59 @@ def create_table(conn):
         print(e)
 
 # Function to insert data into the SHMLendingCompliance table
+# def insert_data(conn, data):
+#     insert_sql = '''INSERT INTO SHMLendingCompliance (Dwelling_ID, Asset_ID, Asset_address, 
+#                    Dwelling_address, lender, condition_title, reference, requirements, 
+#                    action_req, trigger_date, deadline_period, deadline_date, fst_reminder, recurrence, 
+#                    loc8me_contact, shm_team, shm_individual, shm_bu, added_by, entry_date)
+#                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);'''
+
+#     cur = conn.cursor()
+#     cur.fast_executemany = False
+
+#     cur.execute(insert_sql, data)
+#     conn.commit()
+
 def insert_data(conn, data):
+    # Assuming data for 'Dwelling_ID', 'Asset_ID', etc., are lists of the same length
+    # and 'selected_lender', 'condition_title', etc., are single values applicable to all entries
+    
     insert_sql = '''INSERT INTO SHMLendingCompliance (Dwelling_ID, Asset_ID, Asset_address, 
                    Dwelling_address, lender, condition_title, reference, requirements, 
                    action_req, trigger_date, deadline_period, deadline_date, fst_reminder, recurrence, 
                    loc8me_contact, shm_team, shm_individual, shm_bu, added_by, entry_date)
                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);'''
+    
+    for i in range(len(data['Dwelling ID'])):  # Assuming all lists have the same length
+        # Construct a tuple for each row to be inserted
+        row_data = (
+            data['Dwelling ID'][i],
+            data['Asset ID'][i],
+            ", ".join(data['Property']),  # Join list into a single string
+            ", ".join(data['Detailed Address (if applicable)']),
+            data['Lender'],
+            data['Condition Title'],
+            data['Reference'],
+            data['Requirements'],
+            data['Action Required'],
+            data['Trigger Date'],
+            data['Deadline Period (days)'],
+            data['Deadline'],
+            data['First reminder'],
+            data['Recurrence'],
+            data['Loc8me Contact'],
+            data['SHM team resopnsible'],
+            data['SHM invidual responsible'],
+            data['SHM BU lead'],
+            data['Data entered by'],
+            data['Entry date']
+        )
+        
+        # Execute the insert operation for each row
+        cur = conn.cursor()
+        cur.execute(insert_sql, row_data)
+        conn.commit()
 
-    cur = conn.cursor()
-    cur.fast_executemany = False
-
-    cur.execute(insert_sql, data)
-    conn.commit()
 
 # Function to validate email
 # def is_valid_email(email):
