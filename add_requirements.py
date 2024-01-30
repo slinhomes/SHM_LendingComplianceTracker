@@ -48,27 +48,60 @@ def create_table(conn):
         print(e)
 
 # Function to insert data into the SHMLendingCompliance table
+# def insert_data(conn, data):
+#     insert_sql = '''INSERT INTO SHMLendingCompliance (Dwelling_ID, Asset_ID, Asset_address, 
+#                    Dwelling_address, lender, condition_title, reference, requirements, 
+#                    action_req, trigger_date, deadline_period, deadline_date, fst_reminder, recurrence, 
+#                    loc8me_contact, shm_team, shm_individual, shm_bu, added_by, entry_date)
+#                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);'''
+
+#     cur = conn.cursor()
+#     cur.fast_executemany = False
+
+#     cur.execute(insert_sql, data)
+#     conn.commit()
+        
 def insert_data(conn, data):
-    insert_sql = '''INSERT INTO SHMLendingCompliance (Dwelling_ID, Asset_ID, Asset_address, 
-                   Dwelling_address, lender, condition_title, reference, requirements, 
-                   action_req, trigger_date, deadline_period, deadline_date, fst_reminder, recurrence, 
-                   loc8me_contact, shm_team, shm_individual, shm_bu, added_by, entry_date)
-                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);'''
-
     cur = conn.cursor()
-    cur.fast_executemany = False
-    # # Unpack each element for a single row insertion
-    # single_row_data = (
-    #     data['Dwelling ID'][i], data['Asset ID'][i], data['Property'][i], data['Detailed Address (if applicable)'][i], data['Lender'],
-    #     data['Condition Title'], data['Reference'], data['Requirements'],
-    #     data['Action Required'], data['Trigger Date'], data['Deadline Period (days)'], data['Deadline'],
-    #     data['First reminder'], data['Recurrence'], data['Loc8me Contact'],
-    #     data['SHM team resopnsible'], data['SHM invidual responsible'], data['SHM BU lead'],
-    #     data['Data entered by'], data['Entry date']
-    # )
+    
+    # Assuming `data` is a dictionary where some values are lists
+    # and you want to insert multiple rows into the database, one for each item in those lists
+    for i in range(len(data['Dwelling ID'])):
+        # Extract the values for each column, ensuring that each is accessed correctly
+        # This assumes all lists in `data` are of the same length
+        dwelling_id = data['Dwelling ID'][i]
+        asset_id = data['Asset ID'][i]
+        asset_address = ', '.join(data['Property'])  # Assuming this should be a concatenated string of all selections
+        dwelling_address = ', '.join(data['Detailed Address (if applicable)'])  # Same assumption as above
+        lender = data['Lender']
+        condition_title = data['Condition Title']
+        reference = data['Reference']
+        requirements = data['Requirements']
+        action_req = data['Action Required']
+        trigger_date = data['Trigger Date']
+        deadline_period = data['Deadline Period (days)']
+        deadline_date = data['Deadline']
+        fst_reminder = data['First reminder']
+        recurrence = data['Recurrence']
+        loc8me_contact = data['Loc8me Contact']
+        shm_team = data['SHM team resopnsible']
+        shm_individual = data['SHM invidual responsible']
+        shm_bu = data['SHM BU lead']
+        added_by = data['Data entered by']
+        entry_date = data['Entry date']
 
-    cur.execute(insert_sql, data)
+        # Prepare the SQL insert statement
+        insert_sql = '''INSERT INTO SHMLendingCompliance (Dwelling_ID, Asset_ID, Asset_address, Dwelling_address, lender, condition_title, reference, requirements, 
+                        action_req, trigger_date, deadline_period, deadline_date, fst_reminder, recurrence, 
+                        loc8me_contact, shm_team, shm_individual, shm_bu, added_by, entry_date)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);'''
+
+        # Execute the insert statement for each row
+        cur.execute(insert_sql, (dwelling_id, asset_id, asset_address, dwelling_address, lender, condition_title, reference, requirements, 
+                                 action_req, trigger_date, deadline_period, deadline_date, fst_reminder, recurrence, 
+                                 loc8me_contact, shm_team, shm_individual, shm_bu, added_by, entry_date))
     conn.commit()
+
 
 # Function to validate email
 # def is_valid_email(email):
