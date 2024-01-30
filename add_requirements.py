@@ -56,7 +56,7 @@ def insert_data(conn, data):
                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);'''
 
     cur = conn.cursor()
-    cursor.fast_executemany = False
+    cur.fast_executemany = False
     # # Unpack each element for a single row insertion
     # single_row_data = (
     #     data['Dwelling ID'][i], data['Asset ID'][i], data['Property'][i], data['Detailed Address (if applicable)'][i], data['Lender'],
