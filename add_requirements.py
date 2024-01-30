@@ -204,8 +204,8 @@ def show():
     data = {
         "Dwelling ID": dwelling_ids,
         "Asset ID": asset_ids,
-        "Property": 'test address',
-        "Detailed Address (if applicable)": 'test detailed address',
+        "Property": ', '.join(selected_asset_addresses),
+        "Detailed Address (if applicable)": ', '.join(selected_addresses),
         "Lender": selected_lender,
         "Condition Title": condition_title,
         "Reference": reference,
