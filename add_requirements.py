@@ -62,44 +62,33 @@ def create_table(conn):
 #     conn.commit()
 
 def insert_data(conn, data):
-    # Convert lists to comma-separated strings
-    dwelling_ids_str = ', '.join(map(str, data['Dwelling ID']))
-    asset_ids_str = ', '.join(map(str, data['Asset ID']))
-    asset_addresses_str = ', '.join(data['Property'])  # Assuming this is already a list of strings
-    dwelling_addresses_str = ', '.join(data['Detailed Address (if applicable)'])
+    # Assuming 'data' is a dictionary with the correct structure
+    try:
+        # Convert list data to comma-separated strings
+        dwelling_ids_str = ', '.join(map(str, data['Dwelling ID']))
+        asset_ids_str = ', '.join(map(str, data['Asset ID']))
+        # Assuming 'Property' and 'Detailed Address (if applicable)' are already lists of strings
+        property_str = ', '.join(data['Property'])
+        detailed_addresses_str = ', '.join(data['Detailed Address (if applicable)'])
+        
+        # Prepare the SQL insert statement with placeholders for each value
+        insert_sql = '''INSERT INTO SHMLendingCompliance (Dwelling_ID, Asset_ID, Asset_address, 
+                        Dwelling_address, lender, condition_title, reference, requirements, 
+                        action_req, trigger_date, deadline_period, deadline_date, fst_reminder, recurrence, 
+                        loc8me_contact, shm_team, shm_individual, shm_bu, added_by, entry_date)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);'''
 
-    # Prepare the rest of the data, ensuring everything is in the correct format
-    lender = data['Lender']
-    condition_title = data['Condition Title']
-    reference = data['Reference']
-    requirements = data['Requirements']
-    action_req = data['Action Required']
-    trigger_date = data['Trigger Date']
-    deadline_period = data['Deadline Period (days)']
-    deadline_date = data['Deadline']
-    fst_reminder = data['First reminder']
-    recurrence = data['Recurrence']
-    loc8me_contact = data['Loc8me Contact']
-    shm_team = data['SHM team resopnsible']
-    shm_individual = data['SHM invidual responsible']
-    shm_bu = data['SHM BU lead']
-    added_by = data['Data entered by']
-    entry_date = data['Entry date']
-
-    # SQL Insert command
-    insert_sql = '''INSERT INTO SHMLendingCompliance (Dwelling_ID, Asset_ID, Asset_address, 
-                   Dwelling_address, lender, condition_title, reference, requirements, 
-                   action_req, trigger_date, deadline_period, deadline_date, fst_reminder, recurrence, 
-                   loc8me_contact, shm_team, shm_individual, shm_bu, added_by, entry_date)
-                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);'''
-
-    cur = conn.cursor()
-    cur.execute(insert_sql, (dwelling_ids_str, asset_ids_str, asset_addresses_str, dwelling_addresses_str, 
-                             lender, condition_title, reference, requirements, action_req, 
-                             trigger_date, deadline_period, deadline_date, fst_reminder, recurrence, 
-                             loc8me_contact, shm_team, shm_individual, shm_bu, added_by, entry_date))
-    conn.commit()
-
+        # Execute the insert statement with the prepared data
+        cur = conn.cursor()
+        cur.execute(insert_sql, (dwelling_ids_str, asset_ids_str, property_str, detailed_addresses_str, 
+                                 data['Lender'], data['Condition Title'], data['Reference'], data['Requirements'], 
+                                 data['Action Required'], data['Trigger Date'], data['Deadline Period (days)'], 
+                                 data['Deadline'], data['First reminder'], data['Recurrence'], 
+                                 data['Loc8me Contact'], data['SHM team resopnsible'], data['SHM invidual responsible'], 
+                                 data['SHM BU lead'], data['Data entered by'], data['Entry date']))
+        conn.commit()
+    except Exception as e:
+        print(f"An error occurred: {e}")
 
 
 # Function to validate email
