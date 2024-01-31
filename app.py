@@ -42,7 +42,7 @@ def main():
     st.sidebar.title("Main Menu")
 
     # Custom labels with HTML for spacing
-    page_labels = ["Add requirements", "Search for existing requirements"]
+    page_labels = ["Add requirements", "Add requirements v2","Search for existing requirements"]
 
     # Sidebar for page navigation
     selected_label = st.sidebar.radio("Select a page:", page_labels)
