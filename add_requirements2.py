@@ -119,7 +119,8 @@ def show():
         concatenated_dwelling_ids = ", ".join(selected_dwelling_ids)
 
     # Allow users to select multiple detailed addresses
-    selected_detailed_addresses = st.multiselect("Detailed Address", list(all_addresses.keys()), help="You can select multiple addresses if they are related to the selected asset address(es).")
+    filtered_detailed_addresses = {addr: details for addr, details in all_addresses.items() if details[1] in selected_asset_ids}
+    selected_detailed_addresses = st.multiselect("Detailed Address", list(filtered_detailed_addresses.keys()), help="You can select multiple addresses if they are related to the selected asset address(es).")
 
     # If specific detailed addresses are selected, override the concatenated strings for dwelling IDs and detailed addresses
     if selected_detailed_addresses:
