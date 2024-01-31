@@ -19,8 +19,8 @@ def create_table(conn):
     try:
         sql = '''CREATE TABLE [dbo].[SHMLendingCompliance2] (
                 [UID] UNIQUEIDENTIFIER DEFAULT NEWID() PRIMARY KEY,
-                [Dwelling_ID] NVARCHAR(50) NULL,
-                [Asset_ID] NVARCHAR(50) NULL,
+                [Dwelling_ID] NVARCHAR(MAX) NULL,
+                [Asset_ID] NVARCHAR(MAX) NULL,
                 [Asset_address] NVARCHAR(MAX) NULL,
                 [Dwelling_address] NVARCHAR(MAX) NULL,
                 [lender] NVARCHAR(50) NULL,
