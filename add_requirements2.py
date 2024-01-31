@@ -226,7 +226,7 @@ def show():
     if submit_button:
         # Prepare the data tuple for database insertion
         data_tuple = (
-            dwelling_id, asset_id, selected_asset_address, selected_address, selected_lender, 
+            concatenated_dwelling_ids, concatenated_asset_ids, concatenated_asset_addresses, concatenated_detailed_addresses, selected_lender, 
             condition_title, reference, requirements, action_req, trigger_date, 
             deadline_period, deadline_date, fst_reminder, recurrence, loc8me_contact, 
             shm_team, shm_individual, shm_bu, added_by, entry_date
