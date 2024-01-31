@@ -17,10 +17,10 @@ def create_connection():
 # Function to create the SHMLendingCompliance table
 def create_table(conn):
     try:
-        sql = '''CREATE TABLE [dbo].[SHMLendingCompliance] (
+        sql = '''CREATE TABLE [dbo].[SHMLendingCompliance2] (
                 [UID] UNIQUEIDENTIFIER DEFAULT NEWID() PRIMARY KEY,
-                [Dwelling_ID] NVARCHAR(50) NULL,
-                [Asset_ID] NVARCHAR(50) NULL,
+                [Dwelling_ID] NVARCHAR(MAX) NULL,
+                [Asset_ID] NVARCHAR(MAX) NULL,
                 [Asset_address] NVARCHAR(MAX) NULL,
                 [Dwelling_address] NVARCHAR(MAX) NULL,
                 [lender] NVARCHAR(50) NULL,
@@ -49,7 +49,7 @@ def create_table(conn):
 
 # Function to insert data into the SHMLendingCompliance table
 def insert_data(conn, data):
-    insert_sql = '''INSERT INTO SHMLendingCompliance (
+    insert_sql = '''INSERT INTO SHMLendingCompliance2 (
                    Dwelling_ID, Asset_ID, Asset_address, Dwelling_address, lender, 
                    condition_title, reference, requirements, action_req, trigger_date,
                    deadline_period, deadline_date, fst_reminder, recurrence, loc8me_contact, 
@@ -119,7 +119,8 @@ def show():
         concatenated_dwelling_ids = ", ".join(selected_dwelling_ids)
 
     # Allow users to select multiple detailed addresses
-    selected_detailed_addresses = st.multiselect("Detailed Address", list(all_addresses.keys()), help="You can select multiple addresses if they are related to the selected asset address(es).")
+    filtered_detailed_addresses = {addr: details for addr, details in all_addresses.items() if details[1] in selected_asset_ids}
+    selected_detailed_addresses = st.multiselect("Detailed Address", list(filtered_detailed_addresses.keys()), help="You can select multiple addresses if they are related to the selected asset address(es).")
 
     # If specific detailed addresses are selected, override the concatenated strings for dwelling IDs and detailed addresses
     if selected_detailed_addresses:
@@ -225,7 +226,7 @@ def show():
     if submit_button:
         # Prepare the data tuple for database insertion
         data_tuple = (
-            dwelling_id, asset_id, selected_asset_address, selected_address, selected_lender, 
+            concatenated_dwelling_ids, concatenated_asset_ids, concatenated_asset_addresses, concatenated_detailed_addresses, selected_lender, 
             condition_title, reference, requirements, action_req, trigger_date, 
             deadline_period, deadline_date, fst_reminder, recurrence, loc8me_contact, 
             shm_team, shm_individual, shm_bu, added_by, entry_date
@@ -246,4 +247,3 @@ def show():
 
         # Close the database connection
         conn.close()
-
