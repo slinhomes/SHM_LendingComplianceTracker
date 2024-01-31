@@ -1,6 +1,5 @@
 import streamlit as st
 import pyodbc
-# import re
 import pandas as pd
 from datetime import timedelta
 
@@ -47,6 +46,7 @@ def create_table(conn):
     except Exception as e:
         print(e)
 
+
 # Function to insert data into the SHMLendingCompliance table
 def insert_data(conn, data):
     insert_sql = '''INSERT INTO SHMLendingCompliance (
@@ -60,15 +60,6 @@ def insert_data(conn, data):
     cur.execute(insert_sql, data)
     conn.commit()
 
-# Function to validate email
-# def is_valid_email(email):
-#     # Regular expression for validating an email
-#     regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
-#     if re.fullmatch(regex, email):
-#         return True
-#     else:
-#         return False
-
 def show():
     #st.write("Welcome to the Add Requirements Page")
     st.markdown("---")  # Page breaker
@@ -81,9 +72,6 @@ def show():
     cursor.execute("SELECT DISTINCT lender FROM SHMLender")
     lenders = [row[0] for row in cursor.fetchall()]
     selected_lender = st.selectbox("Lender", ["Select a lender"] + lenders)
-
-    asset_address = {}
-    addresses = {}
 
     # Fetch property addresses related to the selected lender
     if selected_lender and selected_lender != "Select a lender":
@@ -103,57 +91,50 @@ def show():
     all_addresses = {f'{row[2]} {row[3]}, {row[4]}': (row[0], row[1], row[5]) for row in rows}  # Mapping detailed address to DwellingID and propco
 
     # Dropdown for selecting asset address
-    selected_asset_addresses = st.multiselect("Asset address", ["All relevant properties"] + list(asset_address.keys()))
+    selected_asset_addresses = st.multiselect("Asset Address", list(asset_address.keys()), help="You can select multiple addresses.")
 
-    # Initialize asset_id and propco sets
-    asset_ids = set()
-    propcos = set()
+    # Initialize variables to store concatenated strings
+    concatenated_dwelling_ids = ""
+    concatenated_asset_ids = ""
+    concatenated_asset_addresses = ""
+    concatenated_detailed_addresses = ""
 
-    # Initialize a dictionary to map asset IDs to their corresponding dwelling IDs and propcos
-    addresses = {}
+    # Initialize sets to hold unique IDs and addresses
+    selected_dwelling_ids = set()
+    selected_asset_ids = set()
 
-    # Filter detailed addresses based on selected asset
-    if "All relevant properties" not in selected_asset_addresses:
+    # Process selected asset addresses
+    if selected_asset_addresses:
         for selected_asset_address in selected_asset_addresses:
-            selected_asset_id = asset_address[selected_asset_address]
+            asset_id = asset_address[selected_asset_address]
+            selected_asset_ids.add(asset_id)
+            # Find detailed addresses related to the selected asset address
             for addr, details in all_addresses.items():
-                if details[1] == selected_asset_id:
-                    if addr not in addresses:
-                        addresses[addr] = details
-                    asset_ids.add(details[1])
-                    propcos.add(details[2])
+                if details[1] == asset_id:
+                    selected_dwelling_ids.add(details[0])
+                    concatenated_detailed_addresses += addr + ", "
 
-    # Dropdown for selecting detailed property address
-    selected_addresses = st.multiselect("Detailed address", ["All relevant address at detailed dwelling level"] + list(addresses.keys()))
+        concatenated_asset_addresses = ", ".join(selected_asset_addresses)
+        concatenated_asset_ids = ", ".join(selected_asset_ids)
+        concatenated_dwelling_ids = ", ".join(selected_dwelling_ids)
 
-    # Initialize dwelling_ids set to collect IDs based on detailed address selection
-    dwelling_ids = set()
+    # Allow users to select multiple detailed addresses
+    selected_detailed_addresses = st.multiselect("Detailed Address", list(all_addresses.keys()), help="You can select multiple addresses if they are related to the selected asset address(es).")
 
-    # Check if a detailed address is selected
-    if "All relevant address at detailed dwelling level" not in selected_addresses:
-        for selected_address in selected_addresses:
-            if selected_address in addresses:
-                details = addresses[selected_address]
-                dwelling_id, asset_id, propco = details
-                dwelling_ids.add(dwelling_id)  # Now only adds relevant dwelling IDs
-                asset_ids.add(asset_id)
-                propcos.add(propco)
-    else:
-        # If no specific detailed address is selected, use all dwelling IDs related to the selected asset addresses
-        dwelling_ids = {details[0] for addr, details in addresses.items() if details[1] in asset_ids}
+    # If specific detailed addresses are selected, override the concatenated strings for dwelling IDs and detailed addresses
+    if selected_detailed_addresses:
+        selected_dwelling_ids.clear()  # Clear previous selections
+        concatenated_detailed_addresses = ""  # Reset the string
+        for selected_address in selected_detailed_addresses:
+            dwelling_id, asset_id, propco = all_addresses[selected_address]
+            selected_dwelling_ids.add(dwelling_id)
+            concatenated_detailed_addresses += selected_address + ", "
 
-    # Convert sets back to lists or strings as needed
-    dwelling_ids = ', '.join(str(id) for id in dwelling_ids)
-    asset_ids = ', '.join(str(id) for id in asset_ids)
-    propcos = ', '.join(propcos)  # Assuming propcos are strings and need to be concatenated
- 
-    # Convert sets back to lists
-    # dwelling_ids = list(dwelling_ids)
-    # asset_ids = list(asset_ids)
-    # propcos = list(propcos)
-    dwelling_ids = str(dwelling_ids)
-    asset_ids = str(asset_ids)
-    propcos = str(propcos)
+        concatenated_dwelling_ids = ", ".join(selected_dwelling_ids)
+    
+    # Trim trailing commas
+    concatenated_detailed_addresses = concatenated_detailed_addresses.rstrip(", ")
+    concatenated_asset_addresses = concatenated_asset_addresses.rstrip(", ")
 
     # Dropdown for selecting a requirements or condition
     condition_title = st.selectbox("Condition title",
@@ -192,7 +173,6 @@ def show():
     # Date input for Reminders
     fst_reminder = st.date_input("Reminder starts on", value=default_fst_reminder_date)
     st.caption("Note: Daily reminders will be sent to individual responsible via email, from the first date of the reminder until the action is complete or the final deadline date.")
-    #fnl_reminder = st.date_input("Final reminder")
 
     # Dropdown for recurring / one-off
     recurrence = st.selectbox("Recurrence (every X days)", ["0", "10","15","20","25","30","60","90"])
@@ -208,65 +188,62 @@ def show():
     added_by = st.text_input("Added by", placeholder="Please add your email address")
     entry_date = st.date_input("Requirement added on")
 
+
     # Collect data into a DataFrame for preview
     data = {
-        "Dwelling ID": dwelling_ids,
-        "Asset ID": asset_ids,
-        "Property": ', '.join(selected_asset_addresses),
-        "Detailed Address (if applicable)": ', '.join(selected_addresses),
+        "Dwelling ID": concatenated_dwelling_ids,
+        "Asset ID": concatenated_asset_ids,
+        "Asset Address": concatenated_asset_addresses,
+        "Detailed Address": concatenated_detailed_addresses,
         "Lender": selected_lender,
         "Condition Title": condition_title,
         "Reference": reference,
         "Requirements": requirements,
         "Action Required": action_req,
-        "Trigger Date": trigger_date,
+        "Trigger Date": trigger_date.strftime('%Y-%m-%d') if trigger_date else None,
         "Deadline Period (days)": deadline_period,
-        "Deadline": deadline_date,
-        "First reminder": fst_reminder,
+        "Deadline Date": deadline_date.strftime('%Y-%m-%d') if deadline_date else None,
+        "First Reminder": fst_reminder.strftime('%Y-%m-%d') if fst_reminder else None,
         "Recurrence": recurrence,
-        #"Final reminder": fnl_reminder,
         "Loc8me Contact": loc8me_contact,
-        "SHM team resopnsible": shm_team,
-        "SHM invidual responsible": shm_individual,
-        "SHM BU lead": shm_bu,
-        "Data entered by": added_by,
-        "Entry date": entry_date
+        "SHM Team Responsible": shm_team,
+        "SHM Individual Responsible": shm_individual,
+        "SHM BU Lead": shm_bu,
+        "Added By": added_by,
+        "Entry Date": entry_date.strftime('%Y-%m-%d') if entry_date else None
     }
+
     preview_df = pd.DataFrame([data])
-    preview_df = preview_df.set_index('Lender')
 
-    # Display the data as a table for preview
+    # Display the data as a table for preview with an important message
     st.markdown("<span style='color: red; font-weight: bold;'>IMPORTANT! Please check all your data inputs before submission.</span>", unsafe_allow_html=True)
+    st.table(preview_df.T)
 
-    transposed_preview_df = preview_df.T
-    #transposed_preview_df = transposed_preview_df.iloc[1:,:]
-    st.table(transposed_preview_df)
-
+    # Build a submit button
     submit_button = st.button("Submit")
-  
+
     if submit_button:
         # Prepare the data tuple for database insertion
         data_tuple = (
-            dwelling_ids, asset_ids, selected_asset_addresses, selected_addresses, selected_lender, 
-            condition_title, reference, requirements, action_req, trigger_date,
-            deadline_period, deadline_date, fst_reminder,recurrence, loc8me_contact, 
-            shm_team, shm_individual, shm_bu, added_by, entry_date #... other fields as needed
+            dwelling_id, asset_id, selected_asset_address, selected_address, selected_lender, 
+            condition_title, reference, requirements, action_req, trigger_date, 
+            deadline_period, deadline_date, fst_reminder, recurrence, loc8me_contact, 
+            shm_team, shm_individual, shm_bu, added_by, entry_date
         )
-
 
         # Connect to the database
         conn = create_connection()
 
-        # Create the table if it doesn't exist
+        # Create the table if it does not exist
         create_table(conn)
 
         # Insert data into the database
         try:
             insert_data(conn, data_tuple)
             st.success("Data submitted successfully!")
-
         except Exception as e:
             st.error(f"An error occurred: {e}")
 
         # Close the database connection
         conn.close()
+
