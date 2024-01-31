@@ -91,25 +91,50 @@ def show():
     all_addresses = {f'{row[2]} {row[3]}, {row[4]}': (row[0], row[1], row[5]) for row in rows}  # Mapping detailed address to DwellingID and propco
 
     # Dropdown for selecting asset address
-    selected_asset_address = st.selectbox("Asset Address", ["Select property address"] + list(asset_address.keys()))
+    selected_asset_addresses = st.multiselect("Asset Address", list(asset_address.keys()), help="You can select multiple addresses.")
 
-    dwelling_id = asset_id = propco = ""  # Initialize dwelling_id, asset_id and propco
-    if selected_asset_address != "Select property address":
-    # Display Asset ID and asset address if an asset address is selected
-        asset_id = asset_address[selected_asset_address]
-        st.write(f"Asset ID: {asset_id}")
+    # Initialize variables to store concatenated strings
+    concatenated_dwelling_ids = ""
+    concatenated_asset_ids = ""
+    concatenated_asset_addresses = ""
+    concatenated_detailed_addresses = ""
 
-    # Dropdown for selecting detailed property address
-    selected_address = st.selectbox("Detailed Address", ["Select address at detailed dwelling level"] + list(all_addresses.keys()))
-    # Check if a detailed address is selected
-    if selected_address != "Select address at detailed dwelling level":
-        # Display Dwelling ID and full address if a detailed address is selected
-        dwelling_id, asset_id, propco = all_addresses[selected_address]
-        st.write(f"Dwelling ID: {dwelling_id}")
-        st.write(f"Asset ID: {asset_id}")
-        st.write(f"Propco: {propco}")
-    else:
-        dwelling_id = 'N/A'
+    # Initialize sets to hold unique IDs and addresses
+    selected_dwelling_ids = set()
+    selected_asset_ids = set()
+
+    # Process selected asset addresses
+    if selected_asset_addresses:
+        for selected_asset_address in selected_asset_addresses:
+            asset_id = asset_address[selected_asset_address]
+            selected_asset_ids.add(asset_id)
+            # Find detailed addresses related to the selected asset address
+            for addr, details in all_addresses.items():
+                if details[1] == asset_id:
+                    selected_dwelling_ids.add(details[0])
+                    concatenated_detailed_addresses += addr + ", "
+
+        concatenated_asset_addresses = ", ".join(selected_asset_addresses)
+        concatenated_asset_ids = ", ".join(selected_asset_ids)
+        concatenated_dwelling_ids = ", ".join(selected_dwelling_ids)
+
+    # Allow users to select multiple detailed addresses
+    selected_detailed_addresses = st.multiselect("Detailed Address", list(all_addresses.keys()), help="You can select multiple addresses if they are related to the selected asset address(es).")
+
+    # If specific detailed addresses are selected, override the concatenated strings for dwelling IDs and detailed addresses
+    if selected_detailed_addresses:
+        selected_dwelling_ids.clear()  # Clear previous selections
+        concatenated_detailed_addresses = ""  # Reset the string
+        for selected_address in selected_detailed_addresses:
+            dwelling_id, asset_id, propco = all_addresses[selected_address]
+            selected_dwelling_ids.add(dwelling_id)
+            concatenated_detailed_addresses += selected_address + ", "
+
+        concatenated_dwelling_ids = ", ".join(selected_dwelling_ids)
+    
+    # Trim trailing commas
+    concatenated_detailed_addresses = concatenated_detailed_addresses.rstrip(", ")
+    concatenated_asset_addresses = concatenated_asset_addresses.rstrip(", ")
 
     # Dropdown for selecting a requirements or condition
     condition_title = st.selectbox("Condition title",
@@ -166,10 +191,10 @@ def show():
 
     # Collect data into a DataFrame for preview
     data = {
-        "Dwelling ID": dwelling_id,
-        "Asset ID": asset_id,
-        "Asset Address": selected_asset_address,
-        "Detailed Address": selected_address,
+        "Dwelling ID": concatenated_dwelling_ids,
+        "Asset ID": concatenated_asset_ids,
+        "Asset Address": concatenated_asset_addresses,
+        "Detailed Address": concatenated_detailed_addresses,
         "Lender": selected_lender,
         "Condition Title": condition_title,
         "Reference": reference,
