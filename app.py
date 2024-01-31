@@ -50,7 +50,7 @@ def main():
     # Map the labels to functions
     app_pages = {
         "Add requirements": add_requirements.show,
-        "Add requirements 2":add_requirements2.show,
+        "Add requirements v2":add_requirements2.show,
         "Search for existing requirements": search_requirements.show,
     }
 
