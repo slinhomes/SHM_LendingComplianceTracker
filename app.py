@@ -34,6 +34,7 @@ if not check_password():
 import streamlit as st
 import add_requirements
 import search_requirements
+import add_requirements2
 
 # Initialize multi-page app setup
 def main():
@@ -49,6 +50,7 @@ def main():
     # Map the labels to functions
     app_pages = {
         "Add requirements": add_requirements.show,
+        "Add requirements 2":add_requirements2.show,
         "Search for existing requirements": search_requirements.show,
     }
 
