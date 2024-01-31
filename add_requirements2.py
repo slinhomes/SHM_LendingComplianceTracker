@@ -49,7 +49,7 @@ def create_table(conn):
 
 # Function to insert data into the SHMLendingCompliance table
 def insert_data(conn, data):
-    insert_sql = '''INSERT INTO SHMLendingCompliance (
+    insert_sql = '''INSERT INTO SHMLendingCompliance2 (
                    Dwelling_ID, Asset_ID, Asset_address, Dwelling_address, lender, 
                    condition_title, reference, requirements, action_req, trigger_date,
                    deadline_period, deadline_date, fst_reminder, recurrence, loc8me_contact, 
@@ -163,6 +163,62 @@ def show():
     added_by = st.text_input("Added by", placeholder="Please add your email address")
     entry_date = st.date_input("Requirement added on")
 
-    
-    
+
+    # Collect data into a DataFrame for preview
+    data = {
+        "Dwelling ID": dwelling_id,
+        "Asset ID": asset_id,
+        "Asset Address": selected_asset_address,
+        "Detailed Address": selected_address,
+        "Lender": selected_lender,
+        "Condition Title": condition_title,
+        "Reference": reference,
+        "Requirements": requirements,
+        "Action Required": action_req,
+        "Trigger Date": trigger_date.strftime('%Y-%m-%d') if trigger_date else None,
+        "Deadline Period (days)": deadline_period,
+        "Deadline Date": deadline_date.strftime('%Y-%m-%d') if deadline_date else None,
+        "First Reminder": fst_reminder.strftime('%Y-%m-%d') if fst_reminder else None,
+        "Recurrence": recurrence,
+        "Loc8me Contact": loc8me_contact,
+        "SHM Team Responsible": shm_team,
+        "SHM Individual Responsible": shm_individual,
+        "SHM BU Lead": shm_bu,
+        "Added By": added_by,
+        "Entry Date": entry_date.strftime('%Y-%m-%d') if entry_date else None
+    }
+
+    preview_df = pd.DataFrame([data])
+
+    # Display the data as a table for preview with an important message
+    st.markdown("<span style='color: red; font-weight: bold;'>IMPORTANT! Please check all your data inputs before submission.</span>", unsafe_allow_html=True)
+    st.table(preview_df.T)
+
+    # Build a submit button
+    submit_button = st.button("Submit")
+
+    if submit_button:
+        # Prepare the data tuple for database insertion
+        data_tuple = (
+            dwelling_id, asset_id, selected_asset_address, selected_address, selected_lender, 
+            condition_title, reference, requirements, action_req, trigger_date, 
+            deadline_period, deadline_date, fst_reminder, recurrence, loc8me_contact, 
+            shm_team, shm_individual, shm_bu, added_by, entry_date
+        )
+
+        # Connect to the database
+        conn = create_connection()
+
+        # Create the table if it does not exist
+        create_table(conn)
+
+        # Insert data into the database
+        try:
+            insert_data(conn, data_tuple)
+            st.success("Data submitted successfully!")
+        except Exception as e:
+            st.error(f"An error occurred: {e}")
+
+        # Close the database connection
+        conn.close()
 
