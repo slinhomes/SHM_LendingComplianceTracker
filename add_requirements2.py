@@ -111,5 +111,58 @@ def show():
     else:
         dwelling_id = 'N/A'
 
+    # Dropdown for selecting a requirements or condition
+    condition_title = st.selectbox("Condition title",
+                                   ['HMO Licence','Asbestos Survey','Refurb Compliance',
+                                    'Refurb Inspectors (incl. Building Certificates and HMO variations)',
+                                    'Arrange valuer / lender inspection and building surveys', 'FRA',
+                                    'Other conditions'])
+
+    # Text input for Reference in facility agreement
+    reference = st.text_input("Reference in facility agreement",
+                              placeholder="Please submit reference number from the facilities agreement. For example: 'Schedule 10 - 1.0'")
+
+    # Text input for Reference in facility agreement
+    requirements = st.text_area("Requirements as per the facility agreement",
+                                 placeholder="Please copy and paste the original requirement wording from the facility agreement.",
+                                 height=100)
+   
+    # Text input for Reference in facility agreement
+    action_req = st.text_area("Action required",
+                                placeholder="Please summarise action/task required as per the facility agreement.",
+                                height=100)
+    
+    # Date input for Trigger Date
+    trigger_date = st.date_input("Requirement Trigger Date")
+
+    # Numeric input for Deadline, period
+    deadline_period = st.number_input("Deadline (days)", min_value=0, value=0, step=1,
+                                    format="%d",
+                                    help="If action is required to be completed by X days following the trigger date. Input if applicable.")
+    # Calculate the default deadline date
+    default_deadline_date = trigger_date + timedelta(days=deadline_period)
+    # Date input for Deadline
+    deadline_date = st.date_input("Deadline", value=default_deadline_date)
+    # Calculate the default reminder date
+    default_fst_reminder_date = deadline_date - timedelta(days=14)
+    # Date input for Reminders
+    fst_reminder = st.date_input("Reminder starts on", value=default_fst_reminder_date)
+    st.caption("Note: Daily reminders will be sent to individual responsible via email, from the first date of the reminder until the action is complete or the final deadline date.")
+
+    # Dropdown for recurring / one-off
+    recurrence = st.selectbox("Recurrence (every X days)", ["0", "10","15","20","25","30","60","90"])
+    st.caption("For one-off event, select 0 days for recurrence.")
+    st.caption("IMPORTANT: The reminder function for recurrent events still need to be build. For the time being, please notify the Data team when you add a recurrent event.")
+    
+    # Text input for key contacts
+    loc8me_contact = st.text_input("Loc8me contact", placeholder="Please add email address")
+    shm_team = st.selectbox("SHM team responsible", ['Data','Finance','Investment','Legal','Ops']) 
+    shm_individual = st.text_input("SHM individual responsible", placeholder="Please add email address")
+    shm_bu = st.text_input("SHM BU lead", placeholder="Please add email address")
+    st.caption("Note: SHM individual responsible and SHM BU lead has to be different.")
+    added_by = st.text_input("Added by", placeholder="Please add your email address")
+    entry_date = st.date_input("Requirement added on")
+
+    
     
 
