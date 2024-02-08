@@ -107,6 +107,7 @@ def show():
         # Construct the SQL query based on selected criteria
         query = """
         SELECT SHMLendingCompliance.uid, SHMLendingCompliance.condition_title, SHMLendingCompliance.reference, 
+               SHMLendingCompliance.Asset_address, SHMLendingCompliance.Dwelling_address,
                SHMLendingCompliance.requirements, SHMLendingCompliance.action_req, SHMLendingCompliance.fst_reminder, 
                SHMLendingCompliance.deadline_date, SHMLendingCompliance.shm_team, 
                SHMLendingCompliance.added_by, SHMLendingCompliance.entry_date, SHMLendingCompliance.complete_by, SHMLendingCompliance.complete_on
@@ -139,7 +140,7 @@ def show():
         result_rows = cursor.fetchall()
 
         if result_rows:
-            result_columns = ["UID", "Condition title", "Reference", "Requirements", 
+            result_columns = ["UID", "Condition title", "Reference", "Asset", "Dwelling", "Requirements", 
                               "Action needed", "First reminder", "Deadline", 
                               "SHM team responsible", "Condition added by", "Condition added on", "Completed by", "Completed on"]
             
