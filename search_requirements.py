@@ -31,6 +31,18 @@ def update_completion(conn, uid, completed_by, complete_on):
     cursor.execute(sql, (completed_by, complete_on, uid))
     conn.commit()
 
+def create_html_table(df):
+    # Start the table and add the header row
+    html = "<style>td {white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px;} th {background-color: #f0f0f5;}</style>"
+    html += "<table border='1'>"
+    html += "<tr>" + "".join([f"<th>{col}</th>" for col in df.columns]) + "</tr>"
+    
+    # Add the data rows
+    for _, row in df.iterrows():
+        html += "<tr>" + "".join([f"<td title='{val}'>{val}</td>" for val in row.values]) + "</tr>"
+    html += "</table>"
+    return html
+
 def show():
     # st.write("Please note that this site is currently under development.")
     # st.caption("Please note that this site is currently under development.")
@@ -112,11 +124,15 @@ def show():
             st.session_state['search_results'] = pd.DataFrame.from_records(result_rows, columns=result_columns).set_index('UID')
 
     # Display search results and editor
-    if st.session_state['search_results'] is not None:
+    #if st.session_state['search_results'] is not None:
+    if 'search_results' in st.session_state:
         st.markdown("---")
         st.subheader("Search Results:")
         st.write("Please make sure you have pressed the Search button")
-        st.dataframe(st.session_state['search_results'], use_container_width=True)
+        df = st.session_state['search_results']
+        html_table = create_html_table(df)
+        #st.dataframe(st.session_state['search_results'], use_container_width=True)
+        st.write(html_table, unsafe_allow_html=True)
 
         col1, col2 = st.columns(2)
 
