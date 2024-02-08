@@ -82,12 +82,12 @@ def show():
         params = []
         
         if selected_asset_address:
-            query += " AND SHMLendingCompliance.Asset_address = ?"
-            params.append(selected_asset_address)
+            query += " AND SHMLendingCompliance.Asset_address LIKE ?"
+            params.append(f"%{selected_asset_address}%")
 
         if selected_dwelling_address:
-            query += " AND SHMLendingCompliance.Dwelling_address = ?"
-            params.append(selected_dwelling_address)
+            query += " AND SHMLendingCompliance.Dwelling_address LIKE ?"
+            params.append(f"%{selected_dwelling_address}%")
 
         if selected_lender:
             query += " AND SHMLendingCompliance.lender = ?"
