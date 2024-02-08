@@ -152,15 +152,15 @@ def show():
         st.markdown("---")
         st.subheader("Search Results:")
         st.write("Please make sure you have pressed the Search button")
-        st.dataframe(st.session_state['search_results'], height=200)
+        st.dataframe(st.session_state['search_results'] use_container_width=True)
 
-        # Make sure df is a dataframe
-        if isinstance(df, pd.DataFrame):
-            # print(df.columns)
-            html_table = create_html_table(df)
-            st.markdown(html_table, unsafe_allow_html=True)
-        else:
-            st.write("No valid data found.")
+        # # Make sure df is a dataframe
+        # if isinstance(df, pd.DataFrame):
+        #     # print(df.columns)
+        #     html_table = create_html_table(df)
+        #     st.markdown(html_table, unsafe_allow_html=True)
+        # else:
+        #     st.write("No valid data found.")
 
         col1, col2 = st.columns(2)
 
