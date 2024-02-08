@@ -32,20 +32,38 @@ def update_completion(conn, uid, completed_by, complete_on):
     conn.commit()
 
 def create_html_table(df):
-    # Ensure DataFrame is not empty and is a DataFrame
-    print(type(df))  # Debug: Check the type of df
-    if df.empty:
+    # Check if df is a DataFrame and not empty
+    if df is None or df.empty:
         return "<p>No data to display</p>"
 
-    # Start with a simple table to debug
-    html = "<style>td {white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px;} th {background-color: #f0f0f5;}</style>"
-    html += "<table border='1'>"
+    # CSS to ensure table fits within the container and to handle long text
+    html = """
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 150px;
+        }
+        th {
+            background-color: #f0f0f5;
+        }
+    </style>
+    """
+    html += "<table>"
     html += "<tr>" + "".join([f"<th>{col}</th>" for col in df.columns]) + "</tr>"
-    # Temporarily comment out the data rows part to focus on headers
-    # for _, row in df.iterrows():
-    #     html += "<tr>" + "".join([f"<td title='{val}'>{val}</td>" for val in row.values]) + "</tr>"
+    for _, row in df.iterrows():
+        html += "<tr>" + "".join([f"<td title='{val}'>{val}</td>" for val in row]) + "</tr>"
     html += "</table>"
     return html
+
 
 def show():
     # st.write("Please note that this site is currently under development.")
@@ -129,15 +147,19 @@ def show():
 
     # Display search results and editor
     #if st.session_state['search_results'] is not None:
-    if 'search_results' in st.session_state:
+    if 'search_results' in st.session_state and st.session_state['search_results'] is not None:
         df = st.session_state['search_results']
-        print(df.columns)
-        st.markdown("---")
-        st.subheader("Search Results:")
-        st.write("Please make sure you have pressed the Search button")
-        html_table = create_html_table(df)
-        #st.dataframe(st.session_state['search_results'], use_container_width=True)
-        st.write(html_table, unsafe_allow_html=True)
+        # Make sure df is a dataframe
+        if isinstance(df, pd.DataFrame):
+            print(df.columns)
+            st.markdown("---")
+            st.subheader("Search Results:")
+            st.write("Please make sure you have pressed the Search button")
+            html_table = create_html_table(df)
+            #st.dataframe(st.session_state['search_results'], use_container_width=True)
+            st.write(html_table, unsafe_allow_html=True)
+        else:
+            st.write("No valid data found.")
 
         col1, col2 = st.columns(2)
 
