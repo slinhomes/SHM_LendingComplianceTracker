@@ -32,14 +32,18 @@ def update_completion(conn, uid, completed_by, complete_on):
     conn.commit()
 
 def create_html_table(df):
-    # Start the table and add the header row
+    # Ensure DataFrame is not empty and is a DataFrame
+    print(type(df))  # Debug: Check the type of df
+    if df.empty:
+        return "<p>No data to display</p>"
+
+    # Start with a simple table to debug
     html = "<style>td {white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px;} th {background-color: #f0f0f5;}</style>"
     html += "<table border='1'>"
     html += "<tr>" + "".join([f"<th>{col}</th>" for col in df.columns]) + "</tr>"
-    
-    # Add the data rows
-    for _, row in df.iterrows():
-        html += "<tr>" + "".join([f"<td title='{val}'>{val}</td>" for val in row.values]) + "</tr>"
+    # Temporarily comment out the data rows part to focus on headers
+    # for _, row in df.iterrows():
+    #     html += "<tr>" + "".join([f"<td title='{val}'>{val}</td>" for val in row.values]) + "</tr>"
     html += "</table>"
     return html
 
@@ -126,10 +130,11 @@ def show():
     # Display search results and editor
     #if st.session_state['search_results'] is not None:
     if 'search_results' in st.session_state:
+        df = st.session_state['search_results']
+        print(df.columns)
         st.markdown("---")
         st.subheader("Search Results:")
         st.write("Please make sure you have pressed the Search button")
-        df = st.session_state['search_results']
         html_table = create_html_table(df)
         #st.dataframe(st.session_state['search_results'], use_container_width=True)
         st.write(html_table, unsafe_allow_html=True)
