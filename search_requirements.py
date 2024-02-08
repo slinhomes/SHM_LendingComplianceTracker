@@ -149,14 +149,15 @@ def show():
     #if st.session_state['search_results'] is not None:
     if 'search_results' in st.session_state and st.session_state['search_results'] is not None:
         df = st.session_state['search_results']
+        st.markdown("---")
+        st.subheader("Search Results:")
+        st.write("Please make sure you have pressed the Search button")
+        st.dataframe(st.session_state['search_results'], height=200)
+
         # Make sure df is a dataframe
         if isinstance(df, pd.DataFrame):
             # print(df.columns)
-            st.markdown("---")
-            st.subheader("Search Results:")
-            st.write("Please make sure you have pressed the Search button")
             html_table = create_html_table(df)
-            #st.dataframe(st.session_state['search_results'], use_container_width=True)
             st.markdown(html_table, unsafe_allow_html=True)
         else:
             st.write("No valid data found.")
