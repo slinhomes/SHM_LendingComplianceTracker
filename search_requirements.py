@@ -157,7 +157,7 @@ def show():
             st.write("Please make sure you have pressed the Search button")
             html_table = create_html_table(df)
             #st.dataframe(st.session_state['search_results'], use_container_width=True)
-            st.write(html_table, unsafe_allow_html=True)
+            st.markdown(html_table, unsafe_allow_html=True)
         else:
             st.write("No valid data found.")
 
