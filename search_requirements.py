@@ -46,9 +46,18 @@ def show():
     cursor.execute("SELECT DISTINCT Asset_Address, Dwelling_Address, Lender, condition_title FROM SHMLendingCompliance")
     rows = cursor.fetchall()
 
-    # Separate the fetched data into individual lists
-    asset_addresses = [row[0] for row in rows]
-    dwelling_addresses = [row[1] for row in rows]
+    # Process asset and dwelling addresses to handle multiple addresses
+    asset_addresses_raw = [row[0] for row in rows]
+    dwelling_addresses_raw = [row[1] for row in rows]
+
+    # Split addresses by comma and get unique values
+    def get_unique_addresses(address_list):
+        split_addresses = [address.strip() for addr in address_list for address in addr.split(',')]
+        return list(set(split_addresses))
+    
+    asset_addresses = get_unique_addresses(asset_addresses_raw)
+    dwelling_addresses = get_unique_addresses(dwelling_addresses_raw)
+    
     lenders = [row[2] for row in rows]
     condition_title = [row[3] for row in rows]
 
