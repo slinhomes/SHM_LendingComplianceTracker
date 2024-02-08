@@ -151,7 +151,7 @@ def show():
         df = st.session_state['search_results']
         # Make sure df is a dataframe
         if isinstance(df, pd.DataFrame):
-            print(df.columns)
+            # print(df.columns)
             st.markdown("---")
             st.subheader("Search Results:")
             st.write("Please make sure you have pressed the Search button")
