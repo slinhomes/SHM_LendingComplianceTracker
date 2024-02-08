@@ -14,12 +14,21 @@ def create_connection():
     return conn
 
 # Function to update db
-def update_database(conn, uid, fst_reminder, deadline_date, completed_by, complete_on):
+def update_database(conn, uid, fst_reminder, deadline_date):
     sql = """UPDATE SHMLendingCompliance 
-             SET fst_reminder = ?, deadline_date = ?, complete_by = ?, complete_on = ?
+             SET fst_reminder = ?, deadline_date = ?
              WHERE UID = ?;"""
     cursor = conn.cursor()
-    cursor.execute(sql, (fst_reminder, deadline_date, completed_by, complete_on, uid))
+    cursor.execute(sql, (fst_reminder, deadline_date, uid))
+    conn.commit()
+
+# Function to update completion
+def update_completion(conn, uid, completed_by, complete_on):
+    sql = """UPDATE SHMLendingCompliance 
+             SET complete_by = ?, complete_on = ?
+             WHERE UID = ?;"""
+    cursor = conn.cursor()
+    cursor.execute(sql, (completed_by, complete_on, uid))
     conn.commit()
 
 def show():
@@ -99,21 +108,36 @@ def show():
         st.write("Search Results:")
         st.dataframe(st.session_state['search_results'])
 
-        st.markdown("---")
-        st.write("Update Requirements:")
+        col1, col2 = st.columns(2)
 
-        uid_to_update = st.selectbox("Select UID to Update", st.session_state['search_results'].index)
-        new_first_reminder = st.date_input("New First Reminder", value=st.session_state['search_results'].loc[uid_to_update,'First reminder'], key="new_first_reminder")
-        new_deadline = st.date_input("New Deadline", value=st.session_state['search_results'].loc[uid_to_update,'Deadline'], key="new_deadline")
-        new_completed_by = st.text_input("Completed By (add your initials)", key="new_completed_by")
-        new_completed_on = st.date_input("Completed On", key ="new_completed_on")
+        with col1:
+            st.subheader("Update Requirements")
 
-        # Update button
-        if st.button('Update Database'):
-            update_database(conn, uid_to_update, new_first_reminder, new_deadline, new_completed_by, new_completed_on)
-            st.success(f'Thanks! Record for UID: {uid_to_update} is successfully updated!')
-        else:
-            st.caption("To update the record, please make sure you click 'Update Database'.")
+            uid_to_update = st.selectbox("Select UID to Update", st.session_state['search_results'].index)
+            new_first_reminder = st.date_input("New First Reminder", value=st.session_state['search_results'].loc[uid_to_update,'First reminder'], key="new_first_reminder")
+            new_deadline = st.date_input("New Deadline", value=st.session_state['search_results'].loc[uid_to_update,'Deadline'], key="new_deadline")
+        
+            # Update button
+            if st.button('Update Database'):
+                update_database(conn, uid_to_update, new_first_reminder, new_deadline)
+                st.success(f'Thanks! Record for UID: {uid_to_update} is successfully updated!')
+            else:
+                st.caption("To update the record, please make sure you click 'Update Database'.")
+        
+        with col2:
+            st.subheader("Mark Completion")
+
+            select_uid_for_completion = st.selectbox("Select UID to Mark Completion", st.session_state['search_results'].index)
+            completed_by = st.text_input("Completed By (add your initials)", key="new_completed_by")
+            completed_on = st.date_input("Completed On", key ="new_completed_on")
+            submit_completion = st.button("Submit Completion", key="submit_completion")
+
+            if submit_completion:
+                update_completion(conn, select_uid_for_completion, completed_by, completed_on)
+                st.success("Completion submitted successfully!")
+            else:
+                st.caption("To submit completion, please make sure you click 'Mark Completion'.")
+
                     
     
 
