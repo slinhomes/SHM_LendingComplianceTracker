@@ -97,10 +97,10 @@ def show():
 
     # Search bars
     selected_lender = st.selectbox("Lender", [""] + lenders)
+    selected_condition_title = st.selectbox("Condition title", [""] + condition_title)
     selected_asset_address = st.selectbox("Search by Property Keywords", [""] + asset_addresses)
     selected_dwelling_address = st.selectbox("Search by Detailed Address Keywords", [""] + dwelling_addresses, 
                                              placeholder="Only select this if you are looking for requirements at dwelling level")
-    selected_condition_title = st.selectbox("Condition title", [""] + condition_title)
 
     # Search button
     if st.button('Search'):
