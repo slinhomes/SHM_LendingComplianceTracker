@@ -114,7 +114,7 @@ def show():
     # Display search results and editor
     if st.session_state['search_results'] is not None:
         st.markdown("---")
-        st.write("Search Results:")
+        st.write("Search Results: (please make sure you have pressed the Search button)")
         st.dataframe(st.session_state['search_results'])
 
         col1, col2 = st.columns(2)
