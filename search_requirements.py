@@ -92,8 +92,8 @@ def show():
     asset_addresses = get_unique_addresses(asset_addresses_raw)
     dwelling_addresses = get_unique_addresses(dwelling_addresses_raw)
 
-    lenders = [row[2] for row in rows]
-    condition_title = [row[3] for row in rows]
+    lenders = list(set([row[2] for row in rows]))
+    condition_title = list(set([row[3] for row in rows]))
 
     # Search bars
     selected_asset_address = st.selectbox("Search by Property Keywords", [""] + asset_addresses)
