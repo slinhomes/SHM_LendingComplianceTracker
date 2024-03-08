@@ -32,7 +32,7 @@ def create_table(conn):
                 [deadline_period] INT NULL,
                 [deadline_date] DATE NULL,
                 [fst_reminder] DATE NULL,
-                [recurrence] NVARCHAR(50) NULL,
+                [recurrence] INT NULL,
                 [loc8me_contact] NVARCHAR(100) NULL,
                 [shm_team] NVARCHAR(50) NULL,
                 [shm_individual] NVARCHAR(100) NULL,
@@ -52,9 +52,9 @@ def insert_data(conn, data):
     insert_sql = '''INSERT INTO SHMLendingCompliance (
                    Dwelling_ID, Asset_ID, Asset_address, Dwelling_address, lender, 
                    condition_title, reference, requirements, action_req, trigger_date,
-                   deadline_period, deadline_date, fst_reminder, recurrence, loc8me_contact, 
+                   deadline_period, deadline_date, fst_reminder, recurrence, end_date, loc8me_contact, 
                    shm_team, shm_individual, shm_bu, added_by, entry_date)
-                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);'''
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);'''
 
     cur = conn.cursor()
     cur.execute(insert_sql, data)
@@ -176,13 +176,17 @@ def show():
     st.caption("Note: Daily reminders will be sent to individual responsible via email, from the first date of the reminder until the action is complete or the final deadline date.")
 
     # Dropdown for recurring / one-off
-    recurrence = st.selectbox("Recurrence (every X days)", ["0", "10","15","20","25","30","60","90"])
-    st.caption("For one-off event, select 0 days for recurrence.")
+    recurrence = st.selectbox("Recurrence (every X days from the first deadline date)", ["0","30","60","90","180","365"])
+    st.caption("Example 1: For one-off event, select 0 days for recurrence.")
+    st.caption("Example 2: For a quarterly event, select 90 days for recurrence.")
     st.caption("IMPORTANT: The reminder function for recurrent events still need to be build. For the time being, please notify the Data team when you add a recurrent event.")
+    # End date of recurring events
+    default_end_date = trigger_date + timedelta(days=365)
+    end_date = st.date_input("End date of recurring events", value=default_end_date)
     
     # Text input for key contacts
     loc8me_contact = st.text_input("Loc8me contact", placeholder="Please add email address")
-    shm_team = st.selectbox("SHM team responsible", ['Data','Finance','Investment','Legal','Ops']) 
+    shm_team = st.selectbox("SHM team responsible", ['Ops','Legal','Finance','Investment','Data']) 
     shm_individual = st.text_input("SHM individual responsible", placeholder="Please add email address")
     shm_bu = st.text_input("SHM BU lead", placeholder="Please add email address")
     st.caption("Note: SHM individual responsible and SHM BU lead has to be different.")
@@ -206,6 +210,7 @@ def show():
         "Deadline Date": deadline_date.strftime('%Y-%m-%d') if deadline_date else None,
         "First Reminder": fst_reminder.strftime('%Y-%m-%d') if fst_reminder else None,
         "Recurrence": recurrence,
+        "Recurrence End Date": end_date,
         "Loc8me Contact": loc8me_contact,
         "SHM Team Responsible": shm_team,
         "SHM Individual Responsible": shm_individual,
@@ -228,7 +233,7 @@ def show():
         data_tuple = (
             concatenated_dwelling_ids, concatenated_asset_ids, concatenated_asset_addresses, concatenated_detailed_addresses, selected_lender, 
             condition_title, reference, requirements, action_req, trigger_date, 
-            deadline_period, deadline_date, fst_reminder, recurrence, loc8me_contact, 
+            deadline_period, deadline_date, fst_reminder, recurrence, end_date, loc8me_contact, 
             shm_team, shm_individual, shm_bu, added_by, entry_date
         )
 
