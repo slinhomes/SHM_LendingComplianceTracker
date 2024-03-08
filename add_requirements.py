@@ -173,7 +173,7 @@ def show():
     default_fst_reminder_date = deadline_date - timedelta(days=14)
     # Date input for Reminders
     fst_reminder = st.date_input("Reminder starts on", value=default_fst_reminder_date)
-    st.caption("Note: Daily reminders will be sent to individual responsible via email, from the first date of the reminder until the action is complete or the final deadline date.")
+    st.caption("Note: Reminders will be sent to individual responsible via email every Monday at 7:00am, from the first date of the reminder until the action is complete or the final deadline date.")
 
     # Dropdown for recurring / one-off
     recurrence = st.selectbox("Recurrence (every X days from the first deadline date)", ["0","30","60","90","180","365"])
