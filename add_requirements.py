@@ -52,7 +52,7 @@ def insert_data(conn, data):
     insert_sql = '''INSERT INTO SHMLendingCompliance (
                    Dwelling_ID, Asset_ID, Asset_address, Dwelling_address, lender, 
                    condition_title, reference, requirements, action_req, trigger_date,
-                   deadline_period, deadline_date, fst_reminder, recurrence, end_date, loc8me_contact, 
+                   deadline_period, deadline_date, fst_reminder, recurrence, num_of_recurrence, loc8me_contact, 
                    shm_team, shm_individual, shm_bu, added_by, entry_date)
                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);'''
 
@@ -181,8 +181,7 @@ def show():
     st.caption("Example 2: For a quarterly event, select 90 days for recurrence.")
     st.caption("IMPORTANT: The reminder function for recurrent events still need to be build. For the time being, please notify the Data team when you add a recurrent event.")
     # End date of recurring events
-    default_end_date = trigger_date + timedelta(days=365)
-    end_date = st.date_input("End date of recurring events", value=default_end_date)
+    num_of_recurrence = st.selectbox("Number of recurrence", ["0","1","2","3","4","5"])
     
     # Text input for key contacts
     loc8me_contact = st.text_input("Loc8me contact", placeholder="Please add email address")
@@ -210,7 +209,7 @@ def show():
         "Deadline Date": deadline_date.strftime('%Y-%m-%d') if deadline_date else None,
         "First Reminder": fst_reminder.strftime('%Y-%m-%d') if fst_reminder else None,
         "Recurrence": recurrence,
-        "Recurrence End Date": end_date,
+        "Number of recurrence": num_of_recurrence,
         "Loc8me Contact": loc8me_contact,
         "SHM Team Responsible": shm_team,
         "SHM Individual Responsible": shm_individual,
@@ -233,7 +232,7 @@ def show():
         data_tuple = (
             concatenated_dwelling_ids, concatenated_asset_ids, concatenated_asset_addresses, concatenated_detailed_addresses, selected_lender, 
             condition_title, reference, requirements, action_req, trigger_date, 
-            deadline_period, deadline_date, fst_reminder, recurrence, end_date, loc8me_contact, 
+            deadline_period, deadline_date, fst_reminder, recurrence, num_of_recurrence, loc8me_contact, 
             shm_team, shm_individual, shm_bu, added_by, entry_date
         )
 
